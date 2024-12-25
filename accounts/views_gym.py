@@ -2,8 +2,9 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
 from django.db import transaction
-from .models import GymProfile, GymLocation
+from .models import GymProfile, GymLocation, GymMembership
 from .forms_gym import GymProfileForm, GymLocationForm, BusinessHoursForm, SocialMediaForm
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 
 def is_gym_owner(user):
     return user.is_authenticated and user.is_gym_owner
@@ -122,3 +123,68 @@ def gym_dashboard(request):
         'locations': locations,
     }
     return render(request, 'accounts/gym/dashboard.html', context)
+
+@login_required
+@user_passes_test(is_gym_owner)
+def gym_admin_dashboard(request):
+    gym_profile = get_object_or_404(GymProfile, owner=request.user)
+    status_filter = request.GET.get('status', 'all')
+    
+    # Get memberships based on status filter
+    memberships = gym_profile.memberships.all()
+    if status_filter != 'all':
+        memberships = memberships.filter(status=status_filter)
+    
+    # Calculate stats
+    total_members = gym_profile.memberships.count()
+    active_members = gym_profile.memberships.filter(status='active').count()
+    pending_members = gym_profile.memberships.filter(status='pending').count()
+    
+    # Pagination
+    paginator = Paginator(memberships, 10)  # Show 10 members per page
+    page = request.GET.get('page')
+    try:
+        memberships = paginator.page(page)
+    except PageNotAnInteger:
+        memberships = paginator.page(1)
+    except EmptyPage:
+        memberships = paginator.page(paginator.num_pages)
+    
+    context = {
+        'memberships': memberships,
+        'total_members': total_members,
+        'active_members': active_members,
+        'pending_members': pending_members,
+        'status': status_filter,
+    }
+    return render(request, 'accounts/gym/admin_dashboard.html', context)
+
+@login_required
+@user_passes_test(is_gym_owner)
+def approve_membership(request, membership_id):
+    if request.method == 'POST':
+        membership = get_object_or_404(GymMembership, id=membership_id, gym__owner=request.user)
+        membership.status = 'active'
+        membership.save()
+        messages.success(request, f'Membership for {membership.member.get_full_name()} has been approved.')
+    return redirect('gym_admin_dashboard')
+
+@login_required
+@user_passes_test(is_gym_owner)
+def deactivate_membership(request, membership_id):
+    if request.method == 'POST':
+        membership = get_object_or_404(GymMembership, id=membership_id, gym__owner=request.user)
+        membership.status = 'inactive'
+        membership.save()
+        messages.success(request, f'Membership for {membership.member.get_full_name()} has been deactivated.')
+    return redirect('gym_admin_dashboard')
+
+@login_required
+@user_passes_test(is_gym_owner)
+def activate_membership(request, membership_id):
+    if request.method == 'POST':
+        membership = get_object_or_404(GymMembership, id=membership_id, gym__owner=request.user)
+        membership.status = 'active'
+        membership.save()
+        messages.success(request, f'Membership for {membership.member.get_full_name()} has been reactivated.')
+    return redirect('gym_admin_dashboard')

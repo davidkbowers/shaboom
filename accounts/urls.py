@@ -13,4 +13,10 @@ urlpatterns = [
     path('gym/setup/hours/', views_gym.gym_hours_setup, name='gym_hours_setup'),
     path('gym/setup/social/', views_gym.gym_social_setup, name='gym_social_setup'),
     path('gym/dashboard/', views_gym.gym_dashboard, name='gym_dashboard'),
+    
+    # Gym admin dashboard URLs
+    path('gym/admin/', views_gym.gym_admin_dashboard, name='gym_admin_dashboard'),
+    path('gym/admin/membership/<int:membership_id>/approve/', views_gym.approve_membership, name='approve_membership'),
+    path('gym/admin/membership/<int:membership_id>/deactivate/', views_gym.deactivate_membership, name='deactivate_membership'),
+    path('gym/admin/membership/<int:membership_id>/activate/', views_gym.activate_membership, name='activate_membership'),
 ]

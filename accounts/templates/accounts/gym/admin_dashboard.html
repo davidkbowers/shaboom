@@ -1,0 +1,156 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2>Admin Dashboard</h2>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'gym_dashboard' %}">Dashboard</a></li>
+                    <li class="breadcrumb-item active">Admin</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Total Members</h5>
+                    <h2 class="card-text">{{ total_members }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Active Members</h5>
+                    <h2 class="card-text">{{ active_members }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-warning text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Pending Approvals</h5>
+                    <h2 class="card-text">{{ pending_members }}</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Members Table -->
+    <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Members</h5>
+            <div class="btn-group">
+                <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">
+                    Filter by Status
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item {% if status == 'all' %}active{% endif %}" href="?status=all">All</a></li>
+                    <li><a class="dropdown-item {% if status == 'active' %}active{% endif %}" href="?status=active">Active</a></li>
+                    <li><a class="dropdown-item {% if status == 'inactive' %}active{% endif %}" href="?status=inactive">Inactive</a></li>
+                    <li><a class="dropdown-item {% if status == 'pending' %}active{% endif %}" href="?status=pending">Pending</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Status</th>
+                            <th>Join Date</th>
+                            <th>End Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for membership in memberships %}
+                        <tr>
+                            <td>{{ membership.member.get_full_name|default:membership.member.username }}</td>
+                            <td>{{ membership.member.email }}</td>
+                            <td>
+                                <span class="badge {% if membership.status == 'active' %}bg-success{% elif membership.status == 'inactive' %}bg-danger{% else %}bg-warning{% endif %}">
+                                    {{ membership.get_status_display }}
+                                </span>
+                            </td>
+                            <td>{{ membership.start_date }}</td>
+                            <td>{{ membership.end_date|default:"-" }}</td>
+                            <td>
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">
+                                        Actions
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        {% if membership.status == 'pending' %}
+                                        <li>
+                                            <form method="post" action="{% url 'approve_membership' membership.id %}">
+                                                {% csrf_token %}
+                                                <button type="submit" class="dropdown-item text-success">Approve</button>
+                                            </form>
+                                        </li>
+                                        {% endif %}
+                                        {% if membership.status == 'active' %}
+                                        <li>
+                                            <form method="post" action="{% url 'deactivate_membership' membership.id %}">
+                                                {% csrf_token %}
+                                                <button type="submit" class="dropdown-item text-danger">Deactivate</button>
+                                            </form>
+                                        </li>
+                                        {% endif %}
+                                        {% if membership.status == 'inactive' %}
+                                        <li>
+                                            <form method="post" action="{% url 'activate_membership' membership.id %}">
+                                                {% csrf_token %}
+                                                <button type="submit" class="dropdown-item text-success">Reactivate</button>
+                                            </form>
+                                        </li>
+                                        {% endif %}
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="text-center">No members found</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            {% if memberships.has_other_pages %}
+            <nav aria-label="Page navigation" class="mt-4">
+                <ul class="pagination justify-content-center">
+                    {% if memberships.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ memberships.previous_page_number }}&status={{ status }}">&laquo;</a>
+                    </li>
+                    {% endif %}
+
+                    {% for i in memberships.paginator.page_range %}
+                    <li class="page-item {% if memberships.number == i %}active{% endif %}">
+                        <a class="page-link" href="?page={{ i }}&status={{ status }}">{{ i }}</a>
+                    </li>
+                    {% endfor %}
+
+                    {% if memberships.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ memberships.next_page_number }}&status={{ status }}">&raquo;</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
