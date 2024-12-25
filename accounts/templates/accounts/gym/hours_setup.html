@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% load form_filters %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">Business Hours Setup</h4>
+                </div>
+                <div class="card-body">
+                    <div class="progress mb-4">
+                        <div class="progress-bar" role="progressbar" style="width: 75%;" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100">Step 3 of 4</div>
+                    </div>
+
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        {% for day, label in form.DAYS_OF_WEEK %}
+                            <div class="card mb-3">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ label }}</h5>
+                                    <div class="row align-items-center">
+                                        <div class="col-md-4">
+                                            <div class="mb-2">
+                                                <label for="id_{{ day }}_open" class="form-label">Opening Time</label>
+                                                {{ form|getattr:day|add:"_open" }}
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="mb-2">
+                                                <label for="id_{{ day }}_close" class="form-label">Closing Time</label>
+                                                {{ form|getattr:day|add:"_close" }}
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-check mt-4">
+                                                {{ form|getattr:day|add:"_closed" }}
+                                                <label class="form-check-label" for="id_{{ day }}_closed">
+                                                    Closed
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">Next: Social Media Links</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+    
+    days.forEach(day => {
+        const closedCheckbox = document.getElementById(`id_${day}_closed`);
+        const openInput = document.getElementById(`id_${day}_open`);
+        const closeInput = document.getElementById(`id_${day}_close`);
+        
+        function toggleTimeInputs() {
+            const isDisabled = closedCheckbox.checked;
+            openInput.disabled = isDisabled;
+            closeInput.disabled = isDisabled;
+        }
+        
+        closedCheckbox.addEventListener('change', toggleTimeInputs);
+        toggleTimeInputs(); // Initial state
+    });
+});
+</script>
+{% endblock %}

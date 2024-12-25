@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block extra_head %}
+<link href="https://vjs.zencdn.net/7.20.3/video-js.css" rel="stylesheet" />
+<script src="https://vjs.zencdn.net/7.20.3/video.min.js"></script>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>{{ video.title }}</h2>
+    <div class="row mt-4">
+        <div class="col-md-8">
+            <video
+                id="my-video"
+                class="video-js vjs-big-play-centered"
+                controls
+                preload="auto"
+                width="100%"
+                height="auto"
+                poster="{% if video.thumbnail %}{{ video.thumbnail.url }}{% endif %}"
+                data-setup="{}"
+            >
+                {% for stream in streams %}
+                <source src="{% url 'video_stream' video.id stream.quality %}" type="video/mp4" label="{{ stream.quality }}" />
+                {% endfor %}
+                <p class="vjs-no-js">
+                    To view this video please enable JavaScript, and consider upgrading to a
+                    web browser that supports HTML5 video
+                </p>
+            </video>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Video Details</h5>
+                    <p class="card-text">{{ video.description }}</p>
+                    <p class="card-text">
+                        <small class="text-muted">
+                            Uploaded {{ video.created_at|timesince }} ago by {{ video.uploaded_by.username }}
+                        </small>
+                    </p>
+                    <p class="card-text">
+                        <small class="text-muted">
+                            Duration: {{ video.duration|floatformat:0 }} seconds
+                        </small>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var player = videojs('my-video', {
+        controls: true,
+        autoplay: false,
+        preload: 'auto',
+        fluid: true,
+        playbackRates: [0.5, 1, 1.5, 2],
+        controlBar: {
+            children: [
+                'playToggle',
+                'volumePanel',
+                'currentTimeDisplay',
+                'timeDivider',
+                'durationDisplay',
+                'progressControl',
+                'playbackRateMenuButton',
+                'qualitySelector',
+                'fullscreenToggle'
+            ]
+        }
+    });
+</script>
+{% endblock %}

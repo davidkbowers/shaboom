@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-2">
+                            {% if gym_profile.logo %}
+                                <img src="{{ gym_profile.logo.url }}" alt="{{ gym_profile.business_name }} Logo" class="img-fluid rounded">
+                            {% endif %}
+                        </div>
+                        <div class="col-md-10">
+                            <h2>{{ gym_profile.business_name }}</h2>
+                            <p class="lead">{{ gym_profile.business_description }}</p>
+                            {% if gym_profile.website %}
+                                <a href="{{ gym_profile.website }}" target="_blank" class="btn btn-outline-primary">Visit Website</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h4 class="mb-0">Locations</h4>
+                </div>
+                <div class="card-body">
+                    {% for location in locations %}
+                        <div class="mb-3">
+                            <h5>{{ location.name }} {% if location.is_main_location %}<span class="badge bg-primary">Main Location</span>{% endif %}</h5>
+                            <p>{{ location.address }}</p>
+                            <p>
+                                <strong>Phone:</strong> {{ location.phone }}<br>
+                                {% if location.email %}
+                                    <strong>Email:</strong> {{ location.email }}
+                                {% endif %}
+                            </p>
+                        </div>
+                        {% if not forloop.last %}<hr>{% endif %}
+                    {% empty %}
+                        <p>No locations added yet.</p>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">Business Hours</h4>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Day</th>
+                                    <th>Hours</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for day, hours in gym_profile.business_hours.items %}
+                                    <tr>
+                                        <td>{{ day|title }}</td>
+                                        <td>
+                                            {% if hours.closed %}
+                                                Closed
+                                            {% else %}
+                                                {{ hours.open }} - {{ hours.close }}
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h4 class="mb-0">Quick Links</h4>
+                </div>
+                <div class="card-body">
+                    <div class="list-group">
+                        <a href="{% url 'upload_video' %}" class="list-group-item list-group-item-action">
+                            Upload New Video
+                        </a>
+                        <a href="#" class="list-group-item list-group-item-action">
+                            Manage Videos
+                        </a>
+                        <a href="#" class="list-group-item list-group-item-action">
+                            View Analytics
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            {% if gym_profile.social_media %}
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="mb-0">Social Media</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="list-group">
+                            {% for platform, url in gym_profile.social_media.items %}
+                                <a href="{{ url }}" target="_blank" class="list-group-item list-group-item-action">
+                                    {{ platform|title }}
+                                </a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
