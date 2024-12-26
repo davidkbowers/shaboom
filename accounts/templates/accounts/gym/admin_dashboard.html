@@ -2,155 +2,179 @@
 {% load static %}
 
 {% block content %}
-<div class="container py-4">
-    <div class="row mb-4">
-        <div class="col-12">
-            <h2>Admin Dashboard</h2>
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{% url 'gym_dashboard' %}">Dashboard</a></li>
-                    <li class="breadcrumb-item active">Admin</li>
-                </ol>
-            </nav>
-        </div>
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="mb-8">
+        <h2 class="text-3xl font-bold text-gray-900 mb-2">Admin Dashboard</h2>
+        <nav class="flex" aria-label="Breadcrumb">
+            <ol class="flex items-center space-x-2">
+                <li>
+                    <a href="{% url 'gym_dashboard' %}" class="text-indigo-600 hover:text-indigo-900">Dashboard</a>
+                </li>
+                <li class="flex items-center">
+                    <svg class="h-5 w-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                    </svg>
+                    <span class="ml-2 text-gray-500">Admin</span>
+                </li>
+            </ol>
+        </nav>
     </div>
 
     <!-- Stats Cards -->
-    <div class="row mb-4">
-        <div class="col-md-4">
-            <div class="card bg-primary text-white">
-                <div class="card-body">
-                    <h5 class="card-title">Total Members</h5>
-                    <h2 class="card-text">{{ total_members }}</h2>
-                </div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div class="bg-indigo-600 rounded-lg shadow-sm p-6">
+            <div class="text-white">
+                <h5 class="text-lg font-medium opacity-80 mb-2">Total Members</h5>
+                <p class="text-4xl font-bold">{{ total_members }}</p>
             </div>
         </div>
-        <div class="col-md-4">
-            <div class="card bg-success text-white">
-                <div class="card-body">
-                    <h5 class="card-title">Active Members</h5>
-                    <h2 class="card-text">{{ active_members }}</h2>
-                </div>
+        <div class="bg-green-600 rounded-lg shadow-sm p-6">
+            <div class="text-white">
+                <h5 class="text-lg font-medium opacity-80 mb-2">Active Members</h5>
+                <p class="text-4xl font-bold">{{ active_members }}</p>
             </div>
         </div>
-        <div class="col-md-4">
-            <div class="card bg-warning text-white">
-                <div class="card-body">
-                    <h5 class="card-title">Pending Approvals</h5>
-                    <h2 class="card-text">{{ pending_members }}</h2>
-                </div>
+        <div class="bg-yellow-500 rounded-lg shadow-sm p-6">
+            <div class="text-white">
+                <h5 class="text-lg font-medium opacity-80 mb-2">Pending Approvals</h5>
+                <p class="text-4xl font-bold">{{ pending_members }}</p>
             </div>
         </div>
     </div>
 
     <!-- Members Table -->
-    <div class="card mb-4">
-        <div class="card-header d-flex justify-content-between align-items-center">
-            <h5 class="mb-0">Members</h5>
-            <div class="btn-group">
-                <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">
+    <div class="bg-white rounded-lg shadow-sm">
+        <div class="border-b border-gray-200 px-6 py-4 flex justify-between items-center">
+            <h5 class="text-lg font-semibold text-gray-900">Members</h5>
+            <div class="relative" x-data="{ open: false }">
+                <button @click="open = !open" type="button" class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                     Filter by Status
+                    <svg class="ml-2 -mr-1 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                    </svg>
                 </button>
-                <ul class="dropdown-menu">
-                    <li><a class="dropdown-item {% if status == 'all' %}active{% endif %}" href="?status=all">All</a></li>
-                    <li><a class="dropdown-item {% if status == 'active' %}active{% endif %}" href="?status=active">Active</a></li>
-                    <li><a class="dropdown-item {% if status == 'inactive' %}active{% endif %}" href="?status=inactive">Inactive</a></li>
-                    <li><a class="dropdown-item {% if status == 'pending' %}active{% endif %}" href="?status=pending">Pending</a></li>
-                </ul>
+                <div x-show="open" @click.away="open = false" class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+                    <div class="py-1">
+                        <a href="?status=all" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 {% if status == 'all' %}bg-gray-100{% endif %}">All</a>
+                        <a href="?status=active" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 {% if status == 'active' %}bg-gray-100{% endif %}">Active</a>
+                        <a href="?status=inactive" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 {% if status == 'inactive' %}bg-gray-100{% endif %}">Inactive</a>
+                        <a href="?status=pending" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 {% if status == 'pending' %}bg-gray-100{% endif %}">Pending</a>
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-hover">
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Status</th>
-                            <th>Join Date</th>
-                            <th>End Date</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for membership in memberships %}
-                        <tr>
-                            <td>{{ membership.member.get_full_name|default:membership.member.username }}</td>
-                            <td>{{ membership.member.email }}</td>
-                            <td>
-                                <span class="badge {% if membership.status == 'active' %}bg-success{% elif membership.status == 'inactive' %}bg-danger{% else %}bg-warning{% endif %}">
-                                    {{ membership.get_status_display }}
-                                </span>
-                            </td>
-                            <td>{{ membership.start_date }}</td>
-                            <td>{{ membership.end_date|default:"-" }}</td>
-                            <td>
-                                <div class="btn-group">
-                                    <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">
-                                        Actions
-                                    </button>
-                                    <ul class="dropdown-menu">
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Join Date</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">End Date</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    {% for membership in memberships %}
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                            {{ membership.member.get_full_name|default:membership.member.username }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {{ membership.member.email }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-2 py-1 text-xs font-medium rounded-full 
+                                {% if membership.status == 'active' %}
+                                    bg-green-100 text-green-800
+                                {% elif membership.status == 'inactive' %}
+                                    bg-red-100 text-red-800
+                                {% else %}
+                                    bg-yellow-100 text-yellow-800
+                                {% endif %}">
+                                {{ membership.get_status_display }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {{ membership.start_date }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {{ membership.end_date|default:"-" }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            <div class="relative" x-data="{ open: false }">
+                                <button @click="open = !open" type="button" class="inline-flex items-center px-3 py-1.5 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                    Actions
+                                    <svg class="ml-2 -mr-1 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                    </svg>
+                                </button>
+                                <div x-show="open" @click.away="open = false" class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+                                    <div class="py-1">
                                         {% if membership.status == 'pending' %}
-                                        <li>
-                                            <form method="post" action="{% url 'approve_membership' membership.id %}">
-                                                {% csrf_token %}
-                                                <button type="submit" class="dropdown-item text-success">Approve</button>
-                                            </form>
-                                        </li>
+                                        <form method="post" action="{% url 'approve_membership' membership.id %}">
+                                            {% csrf_token %}
+                                            <button type="submit" class="block w-full text-left px-4 py-2 text-sm text-green-700 hover:bg-gray-100">Approve</button>
+                                        </form>
                                         {% endif %}
                                         {% if membership.status == 'active' %}
-                                        <li>
-                                            <form method="post" action="{% url 'deactivate_membership' membership.id %}">
-                                                {% csrf_token %}
-                                                <button type="submit" class="dropdown-item text-danger">Deactivate</button>
-                                            </form>
-                                        </li>
+                                        <form method="post" action="{% url 'deactivate_membership' membership.id %}">
+                                            {% csrf_token %}
+                                            <button type="submit" class="block w-full text-left px-4 py-2 text-sm text-red-700 hover:bg-gray-100">Deactivate</button>
+                                        </form>
                                         {% endif %}
                                         {% if membership.status == 'inactive' %}
-                                        <li>
-                                            <form method="post" action="{% url 'activate_membership' membership.id %}">
-                                                {% csrf_token %}
-                                                <button type="submit" class="dropdown-item text-success">Reactivate</button>
-                                            </form>
-                                        </li>
+                                        <form method="post" action="{% url 'activate_membership' membership.id %}">
+                                            {% csrf_token %}
+                                            <button type="submit" class="block w-full text-left px-4 py-2 text-sm text-green-700 hover:bg-gray-100">Reactivate</button>
+                                        </form>
                                         {% endif %}
-                                    </ul>
+                                    </div>
                                 </div>
-                            </td>
-                        </tr>
-                        {% empty %}
-                        <tr>
-                            <td colspan="6" class="text-center">No members found</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="px-6 py-4 text-center text-sm text-gray-500">No members found</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
 
-            {% if memberships.has_other_pages %}
-            <nav aria-label="Page navigation" class="mt-4">
-                <ul class="pagination justify-content-center">
+        {% if memberships.has_other_pages %}
+        <div class="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
+            <div class="flex-1 flex justify-center">
+                <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
                     {% if memberships.has_previous %}
-                    <li class="page-item">
-                        <a class="page-link" href="?page={{ memberships.previous_page_number }}&status={{ status }}">&laquo;</a>
-                    </li>
+                    <a href="?page={{ memberships.previous_page_number }}&status={{ status }}" class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                        <span class="sr-only">Previous</span>
+                        <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                        </svg>
+                    </a>
                     {% endif %}
 
                     {% for i in memberships.paginator.page_range %}
-                    <li class="page-item {% if memberships.number == i %}active{% endif %}">
-                        <a class="page-link" href="?page={{ i }}&status={{ status }}">{{ i }}</a>
-                    </li>
+                    <a href="?page={{ i }}&status={{ status }}" class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium {% if memberships.number == i %}text-indigo-600 bg-indigo-50 border-indigo-500 z-10{% else %}text-gray-700 hover:bg-gray-50{% endif %}">
+                        {{ i }}
+                    </a>
                     {% endfor %}
 
                     {% if memberships.has_next %}
-                    <li class="page-item">
-                        <a class="page-link" href="?page={{ memberships.next_page_number }}&status={{ status }}">&raquo;</a>
-                    </li>
+                    <a href="?page={{ memberships.next_page_number }}&status={{ status }}" class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                        <span class="sr-only">Next</span>
+                        <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                        </svg>
+                    </a>
                     {% endif %}
-                </ul>
-            </nav>
-            {% endif %}
+                </nav>
+            </div>
         </div>
+        {% endif %}
     </div>
 </div>
 {% endblock %}

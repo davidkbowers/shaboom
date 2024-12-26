@@ -1,53 +1,81 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="h-full bg-gray-50">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Shaboom{% endblock %}</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     {% block extra_css %}{% endblock %}
 </head>
-<body class="bg-gray-50 min-h-screen">
+<body class="h-full flex flex-col">
     <!-- Navigation -->
-    <nav class="bg-white shadow-lg">
+    <nav class="bg-white shadow" x-data="{ mobileMenuOpen: false }">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
+                <!-- Logo and Desktop Navigation -->
                 <div class="flex">
                     <div class="flex-shrink-0 flex items-center">
                         <a href="{% url 'marketing:landing' %}" class="text-2xl font-bold text-indigo-600">Shaboom</a>
                     </div>
                     {% if user.is_authenticated %}
-                    <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
+                    <div class="hidden md:ml-6 md:flex md:space-x-8">
                         {% block navigation_items %}
                         <!-- Add your app-specific navigation items here -->
                         {% endblock %}
                     </div>
                     {% endif %}
                 </div>
-                <div class="flex items-center">
+
+                <!-- Desktop Right Navigation -->
+                <div class="hidden md:flex md:items-center">
                     {% if user.is_authenticated %}
-                    <div class="ml-3 relative">
-                        <div class="flex space-x-4">
-                            <a href="{% url 'password_change' %}" class="text-gray-500 hover:text-gray-900">
-                                Settings
-                            </a>
-                            <a href="{% url 'logout' %}" class="text-gray-500 hover:text-gray-900">
-                                Logout
-                            </a>
-                        </div>
+                    <div class="ml-4 flex items-center space-x-4">
+                        <a href="{% url 'password_change' %}" class="text-gray-500 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
+                            Settings
+                        </a>
+                        <a href="{% url 'logout' %}" class="text-gray-500 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
+                            Logout
+                        </a>
                     </div>
                     {% else %}
-                    <div class="flex space-x-4">
-                        <a href="{% url 'login' %}" class="text-gray-500 hover:text-gray-900">
+                    <div class="flex items-center space-x-4">
+                        <a href="{% url 'login' %}" class="text-gray-500 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
                             Sign In
                         </a>
-                        <a href="{% url 'register' %}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700">
+                        <a href="{% url 'register' %}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                             Get Started
                         </a>
                     </div>
                     {% endif %}
                 </div>
+
+                <!-- Mobile menu button -->
+                <div class="flex items-center md:hidden">
+                    <button @click="mobileMenuOpen = !mobileMenuOpen" type="button" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500" aria-controls="mobile-menu" aria-expanded="false">
+                        <span class="sr-only">Open main menu</span>
+                        <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile menu -->
+        <div class="md:hidden" id="mobile-menu" x-show="mobileMenuOpen" @click.away="mobileMenuOpen = false">
+            <div class="px-2 pt-2 pb-3 space-y-1">
+                {% if user.is_authenticated %}
+                    {% block mobile_navigation_items %}
+                    <!-- Add your app-specific mobile navigation items here -->
+                    {% endblock %}
+                    <a href="{% url 'password_change' %}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50">Settings</a>
+                    <a href="{% url 'logout' %}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50">Logout</a>
+                {% else %}
+                    <a href="{% url 'login' %}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50">Sign In</a>
+                    <a href="{% url 'register' %}" class="block w-full text-center px-4 py-2 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Get Started</a>
+                {% endif %}
             </div>
         </div>
     </nav>
@@ -57,80 +85,98 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
         {% for message in messages %}
         <div class="rounded-md p-4 {% if message.tags == 'success' %}bg-green-50 text-green-800{% elif message.tags == 'error' %}bg-red-50 text-red-800{% else %}bg-blue-50 text-blue-800{% endif %} mb-4">
-            {{ message }}
+            <div class="flex">
+                <div class="flex-shrink-0">
+                    {% if message.tags == 'success' %}
+                    <svg class="h-5 w-5 text-green-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                    </svg>
+                    {% elif message.tags == 'error' %}
+                    <svg class="h-5 w-5 text-red-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                    </svg>
+                    {% else %}
+                    <svg class="h-5 w-5 text-blue-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                    </svg>
+                    {% endif %}
+                </div>
+                <div class="ml-3">
+                    <p class="text-sm font-medium">{{ message }}</p>
+                </div>
+            </div>
         </div>
         {% endfor %}
     </div>
     {% endif %}
 
     <!-- Main Content -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {% block content %}{% endblock %}
+    <main class="flex-grow">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            {% block content %}{% endblock %}
+        </div>
     </main>
 
     <!-- Footer -->
-    <footer class="bg-white shadow-lg mt-auto">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <div class="row">
-                <div class="col-md-4">
-                    <h5>About Shaboom</h5>
-                    <p class="text-muted">{% block footer_about %}A powerful platform for your digital needs{% endblock %}</p>
+    <footer class="bg-white border-t border-gray-200 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div>
+                    <h3 class="text-sm font-semibold text-gray-400 tracking-wider uppercase">About Shaboom</h3>
+                    <p class="mt-4 text-base text-gray-500">
+                        {% block footer_about %}A powerful platform for your digital needs{% endblock %}
+                    </p>
                 </div>
-                <div class="col-md-4">
-                    <h5>Quick Links</h5>
-                    <ul class="list-unstyled">
+                <div>
+                    <h3 class="text-sm font-semibold text-gray-400 tracking-wider uppercase">Quick Links</h3>
+                    <ul class="mt-4 space-y-4">
                         {% block footer_links %}
-                        <li><a href="{% url 'marketing:landing' %}" class="text-decoration-none">Home</a></li>
+                        <li>
+                            <a href="{% url 'marketing:landing' %}" class="text-base text-gray-500 hover:text-gray-900">
+                                Home
+                            </a>
+                        </li>
                         {% if user.is_authenticated %}
-                            <li><a href="{% url 'password_change' %}" class="text-decoration-none">Change Password</a></li>
+                        <li>
+                            <a href="{% url 'password_change' %}" class="text-base text-gray-500 hover:text-gray-900">
+                                Change Password
+                            </a>
+                        </li>
                         {% else %}
-                            <li><a href="{% url 'login' %}" class="text-decoration-none">Login</a></li>
-                            <li><a href="{% url 'register' %}" class="text-decoration-none">Register</a></li>
+                        <li>
+                            <a href="{% url 'login' %}" class="text-base text-gray-500 hover:text-gray-900">
+                                Login
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'register' %}" class="text-base text-gray-500 hover:text-gray-900">
+                                Register
+                            </a>
+                        </li>
                         {% endif %}
                         {% endblock %}
                     </ul>
                 </div>
-                <div class="col-md-4">
-                    <h5>Contact</h5>
-                    {% block footer_contact %}
-                    <address class="text-muted">
-                        <i class="bi bi-envelope"></i> Email: contact@shaboom.com<br>
-                        <i class="bi bi-telephone"></i> Phone: (555) 123-4567
-                    </address>
-                    {% endblock %}
+                <div>
+                    <h3 class="text-sm font-semibold text-gray-400 tracking-wider uppercase">Contact</h3>
+                    <div class="mt-4 space-y-4">
+                        {% block footer_contact %}
+                        <p class="text-base text-gray-500">
+                            <span class="block">Email: contact@shaboom.com</span>
+                            <span class="block mt-1">Phone: (555) 123-4567</span>
+                        </p>
+                        {% endblock %}
+                    </div>
                 </div>
             </div>
-            <hr>
-            <div class="text-center text-muted">
-                <small>&copy; {% now "Y" %} Shaboom. All rights reserved.</small>
+            <div class="mt-8 border-t border-gray-200 pt-8">
+                <p class="text-base text-gray-400 text-center">
+                    &copy; {% now "Y" %} Shaboom. All rights reserved.
+                </p>
             </div>
         </div>
     </footer>
 
-    <!-- JavaScript -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        // Show loading spinner when submitting forms
-        document.addEventListener('DOMContentLoaded', function() {
-            const forms = document.querySelectorAll('form');
-            const spinner = document.querySelector('.loading-spinner');
-            
-            forms.forEach(form => {
-                form.addEventListener('submit', function() {
-                    spinner.style.display = 'block';
-                });
-            });
-        });
-
-        // Auto-hide alerts after 5 seconds
-        const alerts = document.querySelectorAll('.alert');
-        alerts.forEach(alert => {
-            setTimeout(() => {
-                const bsAlert = new bootstrap.Alert(alert);
-                bsAlert.close();
-            }, 5000);
-        });
-    </script>
     {% block extra_js %}{% endblock %}
 </body>
 </html>
