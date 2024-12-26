@@ -15,7 +15,7 @@ def register_view(request):
             messages.success(request, 'Registration successful!')
             if user.is_gym_owner:
                 return redirect('gym_profile_setup')
-            return redirect('home')
+            return redirect('videos:list')
     else:
         form = CustomUserCreationForm()
     return render(request, 'accounts/register.html', {'form': form})
@@ -31,7 +31,7 @@ def login_view(request):
                 return redirect('gym_profile_setup')
             elif user.is_gym_owner:
                 return redirect('gym_dashboard')
-            return redirect('home')
+            return redirect('videos:list')
     else:
         form = CustomAuthenticationForm()
     return render(request, 'accounts/login.html', {'form': form})

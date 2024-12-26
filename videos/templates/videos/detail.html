@@ -1,75 +1,74 @@
 {% extends 'base.html' %}
 
-{% block extra_head %}
-<link href="https://vjs.zencdn.net/7.20.3/video-js.css" rel="stylesheet" />
-<script src="https://vjs.zencdn.net/7.20.3/video.min.js"></script>
-{% endblock %}
+{% block title %}{{ video.title }} - Shaboom{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
-    <h2>{{ video.title }}</h2>
-    <div class="row mt-4">
-        <div class="col-md-8">
-            <video
-                id="my-video"
-                class="video-js vjs-big-play-centered"
-                controls
-                preload="auto"
-                width="100%"
-                height="auto"
-                poster="{% if video.thumbnail %}{{ video.thumbnail.url }}{% endif %}"
-                data-setup="{}"
-            >
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="max-w-3xl mx-auto">
+        <!-- Video Player -->
+        <div class="aspect-w-16 aspect-h-9 mb-8">
+            <video controls class="w-full h-full rounded-lg shadow-lg">
                 {% for stream in streams %}
                 <source src="{% url 'video_stream' video.id stream.quality %}" type="video/mp4" label="{{ stream.quality }}" />
                 {% endfor %}
-                <p class="vjs-no-js">
-                    To view this video please enable JavaScript, and consider upgrading to a
-                    web browser that supports HTML5 video
-                </p>
+                Your browser does not support the video tag.
             </video>
         </div>
-        <div class="col-md-4">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Video Details</h5>
-                    <p class="card-text">{{ video.description }}</p>
-                    <p class="card-text">
-                        <small class="text-muted">
-                            Uploaded {{ video.created_at|timesince }} ago by {{ video.uploaded_by.username }}
-                        </small>
-                    </p>
-                    <p class="card-text">
-                        <small class="text-muted">
-                            Duration: {{ video.duration|floatformat:0 }} seconds
-                        </small>
-                    </p>
+
+        <!-- Video Info -->
+        <div class="bg-white shadow overflow-hidden sm:rounded-lg mb-8">
+            <div class="px-4 py-5 sm:px-6">
+                <h1 class="text-2xl font-bold text-gray-900">{{ video.title }}</h1>
+                <p class="mt-1 max-w-2xl text-sm text-gray-500">
+                    Uploaded {{ video.created_at|date:"F j, Y" }}
+                </p>
+            </div>
+            <div class="border-t border-gray-200 px-4 py-5 sm:px-6">
+                <div class="prose prose-sm max-w-none text-gray-500">
+                    {{ video.description|linebreaks }}
+                </div>
+            </div>
+        </div>
+
+        <!-- Comments Section -->
+        <div class="bg-white shadow sm:rounded-lg">
+            <div class="px-4 py-5 sm:p-6">
+                <h2 class="text-lg font-medium text-gray-900">Comments</h2>
+                
+                <!-- New Comment Form -->
+                <div class="mt-6">
+                    <form method="post" action="{% url 'videos:add_comment' video.id %}" class="space-y-4">
+                        {% csrf_token %}
+                        <div>
+                            <label for="comment" class="sr-only">Add your comment</label>
+                            <textarea id="comment" name="comment" rows="3" class="shadow-sm block w-full focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border border-gray-300 rounded-md" placeholder="Add a comment..."></textarea>
+                        </div>
+                        <div class="flex justify-end">
+                            <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                Post Comment
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Comments List -->
+                <div class="mt-8 space-y-6">
+                    {% for comment in video.comments.all %}
+                    <div class="flex space-x-3">
+                        <div class="flex-1 space-y-1 bg-gray-50 rounded-lg px-4 py-3">
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-sm font-medium text-gray-900">{{ comment.user.username }}</h3>
+                                <p class="text-sm text-gray-500">{{ comment.created_at|timesince }} ago</p>
+                            </div>
+                            <p class="text-sm text-gray-500">{{ comment.text }}</p>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <p class="text-sm text-gray-500 text-center py-4">No comments yet. Be the first to comment!</p>
+                    {% endfor %}
                 </div>
             </div>
         </div>
     </div>
 </div>
-
-<script>
-    var player = videojs('my-video', {
-        controls: true,
-        autoplay: false,
-        preload: 'auto',
-        fluid: true,
-        playbackRates: [0.5, 1, 1.5, 2],
-        controlBar: {
-            children: [
-                'playToggle',
-                'volumePanel',
-                'currentTimeDisplay',
-                'timeDivider',
-                'durationDisplay',
-                'progressControl',
-                'playbackRateMenuButton',
-                'qualitySelector',
-                'fullscreenToggle'
-            ]
-        }
-    });
-</script>
 {% endblock %}

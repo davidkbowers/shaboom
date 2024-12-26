@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'accounts',  # Add our new app
     'videos',
+    'marketing',  # Add the new marketing app
 ]
 
 MIDDLEWARE = [

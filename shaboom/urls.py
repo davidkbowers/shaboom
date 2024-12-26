@@ -23,5 +23,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('accounts.urls')),
     path('videos/', include('videos.urls')),
-    path('', RedirectView.as_view(url='accounts/login/'), name='home'),
+    path('', include('marketing.urls', namespace='marketing')),  # Add namespace
 ]
