@@ -22,6 +22,6 @@ from videos import urls
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('accounts.urls')),
-    path('videos/', include('videos.urls')),
+    path('videos/', include('videos.urls', namespace='videos')),
     path('', include('marketing.urls', namespace='marketing')),  # Add namespace
 ]

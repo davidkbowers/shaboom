@@ -58,12 +58,16 @@ class BusinessHoursForm(forms.Form):
     def clean(self):
         cleaned_data = super().clean()
         for day, _ in self.DAYS_OF_WEEK:
-            is_closed = cleaned_data.get(f'{day}_closed')
+            is_closed = cleaned_data.get(f'{day}_closed', False)
             open_time = cleaned_data.get(f'{day}_open')
             close_time = cleaned_data.get(f'{day}_close')
 
-            if not is_closed and (not open_time or not close_time):
-                raise ValidationError(f"Please specify both opening and closing times for {day.title()} or mark it as closed.")
+            if not is_closed:
+                if not open_time or not close_time:
+                    raise ValidationError(f"Please specify both opening and closing times for {day.title()} or mark it as closed.")
+
+                if open_time >= close_time:
+                    raise ValidationError(f"Opening time must be before closing time for {day.title()}.")
 
         return cleaned_data
 

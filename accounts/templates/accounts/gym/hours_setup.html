@@ -6,7 +6,7 @@
     <div class="bg-white shadow rounded-lg overflow-hidden">
         <div class="px-4 py-5 sm:px-6 border-b border-gray-200">
             <h3 class="text-lg leading-6 font-medium text-gray-900">Business Hours Setup</h3>
-            <p class="mt-1 text-sm text-gray-500">Set your business operating hours for each day of the week.</p>
+            <p class="mt-1 text-sm text-gray-500">Set your gym's operating hours for each day of the week.</p>
         </div>
 
         <!-- Progress Bar -->
@@ -22,89 +22,43 @@
         <div class="px-4 py-5 sm:p-6">
             <form method="post" class="space-y-6">
                 {% csrf_token %}
-                
-                {% for day, label in form.DAYS_OF_WEEK %}
-                    <div class="bg-gray-50 rounded-lg p-4 hover:bg-gray-100 transition duration-150">
-                        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-                            <h4 class="text-base font-medium text-gray-900 mb-4 sm:mb-0">{{ label }}</h4>
-                            <div class="flex flex-col sm:flex-row sm:items-center sm:space-x-4 space-y-4 sm:space-y-0">
-                                <div class="relative" x-data="{ closed: document.getElementById('id_{{ day }}_closed').checked }">
-                                    <label class="inline-flex items-center cursor-pointer">
-                                        {{ form|getattr:day|add:"_closed"|addclass:"sr-only" }}
-                                        <div class="relative">
-                                            <div class="block w-10 h-6 bg-gray-300 rounded-full shadow-inner"
-                                                 :class="{ 'bg-indigo-600': closed }"></div>
-                                            <div class="dot absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition transform"
-                                                 :class="{ 'translate-x-4': closed }"></div>
-                                        </div>
-                                        <span class="ml-3 text-sm font-medium text-gray-700">Closed</span>
-                                    </label>
-                                </div>
-                                
-                                <div class="grid grid-cols-2 gap-4">
-                                    <div>
-                                        <label for="id_{{ day }}_open" class="block text-sm font-medium text-gray-700">Opening Time</label>
-                                        <div class="mt-1">
-                                            {{ form|getattr:day|add:"_open"|addclass:"mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" }}
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <label for="id_{{ day }}_close" class="block text-sm font-medium text-gray-700">Closing Time</label>
-                                        <div class="mt-1">
-                                            {{ form|getattr:day|add:"_close"|addclass:"mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" }}
-                                        </div>
-                                    </div>
-                                </div>
+                {% for day in form.days %}
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between">
+                        <h4 class="text-base font-medium text-gray-900">{{ day.name }}</h4>
+                        <div class="flex items-center">
+                            <label class="inline-flex items-center">
+                                {{ day.is_closed|addclass:"h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded" }}
+                                <span class="ml-2 text-sm text-gray-600">Closed</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                        <div>
+                            <label for="{{ day.open_time.id_for_label }}" class="block text-sm font-medium text-gray-700">Opening Time</label>
+                            <div class="mt-1">
+                                {{ day.open_time|addclass:"block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" }}
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="{{ day.close_time.id_for_label }}" class="block text-sm font-medium text-gray-700">Closing Time</label>
+                            <div class="mt-1">
+                                {{ day.close_time|addclass:"block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" }}
                             </div>
                         </div>
                     </div>
+                </div>
                 {% endfor %}
 
                 <div class="pt-6">
                     <button type="submit" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                        Next: Social Media Links
+                        Continue
                     </button>
                 </div>
             </form>
         </div>
     </div>
 </div>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
-    
-    days.forEach(day => {
-        const closedCheckbox = document.getElementById(`id_${day}_closed`);
-        const openInput = document.getElementById(`id_${day}_open`);
-        const closeInput = document.getElementById(`id_${day}_close`);
-        
-        function toggleTimeInputs() {
-            const isDisabled = closedCheckbox.checked;
-            openInput.disabled = isDisabled;
-            closeInput.disabled = isDisabled;
-            
-            // Add visual feedback for disabled state
-            [openInput, closeInput].forEach(input => {
-                if (isDisabled) {
-                    input.classList.add('opacity-50', 'bg-gray-100');
-                } else {
-                    input.classList.remove('opacity-50', 'bg-gray-100');
-                }
-            });
-        }
-        
-        closedCheckbox.addEventListener('change', toggleTimeInputs);
-        toggleTimeInputs(); // Initial state
-
-        // Initialize Alpine.js data
-        closedCheckbox.addEventListener('change', function() {
-            const container = this.closest('[x-data]');
-            if (container && container.__x) {
-                container.__x.updateData('closed', this.checked);
-            }
-        });
-    });
-});
-</script>
 {% endblock %}

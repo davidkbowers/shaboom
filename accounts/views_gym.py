@@ -12,23 +12,18 @@ def is_gym_owner(user):
 @login_required
 @user_passes_test(is_gym_owner)
 def gym_profile_setup(request):
-    try:
-        gym_profile = request.user.gym_profile
-        messages.info(request, 'You already have a gym profile.')
-        return redirect('gym_dashboard')
-    except GymProfile.DoesNotExist:
-        if request.method == 'POST':
-            form = GymProfileForm(request.POST, request.FILES)
-            if form.is_valid():
-                gym_profile = form.save(commit=False)
-                gym_profile.owner = request.user
-                gym_profile.save()
-                messages.success(request, 'Gym profile created successfully!')
-                return redirect('gym_location_setup')
-        else:
-            form = GymProfileForm()
-        
-        return render(request, 'accounts/gym/profile_setup.html', {'form': form})
+    if request.method == 'POST':
+        form = GymProfileForm(request.POST, request.FILES)
+        if form.is_valid():
+            profile = form.save(commit=False)
+            profile.owner = request.user
+            profile.save()
+            messages.success(request, 'Gym profile created successfully!')
+            return redirect('gym_location_setup')
+    else:
+        form = GymProfileForm()
+    context = {'form': form}
+    return render(request, 'accounts/gym/profile_setup.html', context)
 
 @login_required
 @user_passes_test(is_gym_owner)
@@ -58,12 +53,15 @@ def gym_hours_setup(request):
         if form.is_valid():
             hours = {}
             for day, _ in form.DAYS_OF_WEEK:
-                if form.cleaned_data[f'{day}_closed']:
+                is_closed = form.cleaned_data.get(f'{day}_closed', False)
+                if is_closed:
                     hours[day] = {'closed': True}
                 else:
+                    open_time = form.cleaned_data.get(f'{day}_open')
+                    close_time = form.cleaned_data.get(f'{day}_close')
                     hours[day] = {
-                        'open': form.cleaned_data[f'{day}_open'].strftime('%H:%M'),
-                        'close': form.cleaned_data[f'{day}_close'].strftime('%H:%M'),
+                        'open': open_time.strftime('%H:%M') if open_time else None,
+                        'close': close_time.strftime('%H:%M') if close_time else None,
                         'closed': False
                     }
             
@@ -188,3 +186,11 @@ def activate_membership(request, membership_id):
         membership.save()
         messages.success(request, f'Membership for {membership.member.get_full_name()} has been reactivated.')
     return redirect('gym_admin_dashboard')
+
+@login_required
+@user_passes_test(is_gym_owner)
+def upload_video(request):
+    if request.method == 'POST':
+        # Handle video upload
+        pass
+    return render(request, 'accounts/gym/upload_video.html')

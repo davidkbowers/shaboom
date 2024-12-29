@@ -3,6 +3,8 @@ from . import views
 from django.conf.urls.static import static
 from django.conf import settings
 
+app_name = 'videos'
+
 urlpatterns = [
     path('upload/', views.upload_video, name='upload_video'),
     path('', views.video_list, name='video_list'),

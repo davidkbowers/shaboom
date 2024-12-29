@@ -1,8 +1,10 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import login, logout
+from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
-from .forms import CustomUserCreationForm, CustomAuthenticationForm, CustomPasswordChangeForm
+from .forms import CustomUserCreationForm, CustomPasswordChangeForm, CustomAuthenticationForm
+from .models import GymProfile  # Import GymProfile model
 
 # Create your views here.
 
@@ -12,28 +14,29 @@ def register_view(request):
         if form.is_valid():
             user = form.save()
             login(request, user)
-            messages.success(request, 'Registration successful!')
-            if user.is_gym_owner:
+            if user.user_type == 'owner':
                 return redirect('gym_profile_setup')
-            return redirect('videos:list')
+            return redirect('marketing:landing')
     else:
         form = CustomUserCreationForm()
     return render(request, 'accounts/register.html', {'form': form})
 
 def login_view(request):
     if request.method == 'POST':
-        form = CustomAuthenticationForm(data=request.POST)
+        form = CustomAuthenticationForm(request, data=request.POST)
         if form.is_valid():
             user = form.get_user()
             login(request, user)
-            messages.success(request, 'Login successful!')
-            if user.is_gym_owner and not user.onboarding_completed:
-                return redirect('gym_profile_setup')
-            elif user.is_gym_owner:
-                return redirect('gym_dashboard')
-            return redirect('videos:list')
+            if user.user_type == 'owner':
+                # Check if gym owner has a profile
+                try:
+                    user.gym_profile
+                    return redirect('gym_dashboard')
+                except GymProfile.DoesNotExist:
+                    return redirect('gym_profile_setup')
+            return redirect('marketing:landing')
     else:
-        form = CustomAuthenticationForm()
+        form = CustomAuthenticationForm(request)
     return render(request, 'accounts/login.html', {'form': form})
 
 def logout_view(request):
