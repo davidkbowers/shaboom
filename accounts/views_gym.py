@@ -10,23 +10,33 @@ def is_gym_owner(user):
     return user.is_authenticated and user.is_gym_owner
 
 @login_required
-@user_passes_test(is_gym_owner)
 def gym_profile_setup(request):
+    if not request.user.user_type == 'owner':
+        print("User is not owner, redirecting to login")
+        return redirect('accounts:login')
+    
     if request.method == 'POST':
+        print(f"Received POST data: {request.POST}")
         form = GymProfileForm(request.POST, request.FILES)
+        print(f"Form is valid: {form.is_valid()}")
+        if not form.is_valid():
+            print(f"Form errors: {form.errors}")
         if form.is_valid():
             profile = form.save(commit=False)
             profile.owner = request.user
             profile.save()
             messages.success(request, 'Gym profile created successfully!')
-            return redirect('gym_location_setup')
+            print("Profile created successfully, redirecting to hours setup")
+            return redirect('accounts:gym_hours_setup')
     else:
         form = GymProfileForm()
+    
     context = {'form': form}
-    return render(request, 'accounts/gym/profile_setup.html', context)
+    template_name = 'accounts/gym/test_profile_setup.html' if 'test' in request.GET else 'accounts/gym/profile_setup.html'
+    print(f"Rendering template: {template_name}")
+    return render(request, template_name, context)
 
 @login_required
-@user_passes_test(is_gym_owner)
 def gym_location_setup(request):
     gym_profile = get_object_or_404(GymProfile, owner=request.user)
     
@@ -37,14 +47,15 @@ def gym_location_setup(request):
             location.gym = gym_profile
             location.save()
             messages.success(request, 'Gym location added successfully!')
-            return redirect('gym_hours_setup')
+            return redirect('accounts:gym_social_setup')
     else:
         form = GymLocationForm()
     
-    return render(request, 'accounts/gym/location_setup.html', {'form': form})
+    context = {'form': form}
+    template_name = 'accounts/gym/test_location_setup.html' if 'test' in request.GET else 'accounts/gym/location_setup.html'
+    return render(request, template_name, context)
 
 @login_required
-@user_passes_test(is_gym_owner)
 def gym_hours_setup(request):
     gym_profile = get_object_or_404(GymProfile, owner=request.user)
     
@@ -68,7 +79,7 @@ def gym_hours_setup(request):
             gym_profile.business_hours = hours
             gym_profile.save()
             messages.success(request, 'Business hours saved successfully!')
-            return redirect('gym_social_setup')
+            return redirect('accounts:gym_location_setup')
     else:
         initial = {}
         if gym_profile.business_hours:
@@ -80,10 +91,11 @@ def gym_hours_setup(request):
                     initial[f'{day}_close'] = hours.get('close')
         form = BusinessHoursForm(initial=initial)
     
-    return render(request, 'accounts/gym/hours_setup.html', {'form': form})
+    context = {'form': form}
+    template_name = 'accounts/gym/test_hours_setup.html' if 'test' in request.GET else 'accounts/gym/hours_setup.html'
+    return render(request, template_name, context)
 
 @login_required
-@user_passes_test(is_gym_owner)
 def gym_social_setup(request):
     gym_profile = get_object_or_404(GymProfile, owner=request.user)
     
@@ -104,15 +116,16 @@ def gym_social_setup(request):
             request.user.save()
             
             messages.success(request, 'Social media links saved successfully! Onboarding completed.')
-            return redirect('gym_dashboard')
+            return redirect('accounts:gym_dashboard')
     else:
         initial = gym_profile.social_media if gym_profile.social_media else {}
         form = SocialMediaForm(initial=initial)
     
-    return render(request, 'accounts/gym/social_setup.html', {'form': form})
+    context = {'form': form}
+    template_name = 'accounts/gym/test_social_setup.html' if 'test' in request.GET else 'accounts/gym/social_setup.html'
+    return render(request, template_name, context)
 
 @login_required
-@user_passes_test(is_gym_owner)
 def gym_dashboard(request):
     gym_profile = get_object_or_404(GymProfile, owner=request.user)
     locations = gym_profile.locations.all()
@@ -120,10 +133,10 @@ def gym_dashboard(request):
         'gym_profile': gym_profile,
         'locations': locations,
     }
-    return render(request, 'accounts/gym/dashboard.html', context)
+    template_name = 'accounts/gym/test_dashboard.html' if 'test' in request.GET else 'accounts/gym/dashboard.html'
+    return render(request, template_name, context)
 
 @login_required
-@user_passes_test(is_gym_owner)
 def gym_admin_dashboard(request):
     gym_profile = get_object_or_404(GymProfile, owner=request.user)
     status_filter = request.GET.get('status', 'all')
@@ -158,37 +171,33 @@ def gym_admin_dashboard(request):
     return render(request, 'accounts/gym/admin_dashboard.html', context)
 
 @login_required
-@user_passes_test(is_gym_owner)
 def approve_membership(request, membership_id):
     if request.method == 'POST':
         membership = get_object_or_404(GymMembership, id=membership_id, gym__owner=request.user)
         membership.status = 'active'
         membership.save()
         messages.success(request, f'Membership for {membership.member.get_full_name()} has been approved.')
-    return redirect('gym_admin_dashboard')
+    return redirect('accounts:gym_admin_dashboard')
 
 @login_required
-@user_passes_test(is_gym_owner)
 def deactivate_membership(request, membership_id):
     if request.method == 'POST':
         membership = get_object_or_404(GymMembership, id=membership_id, gym__owner=request.user)
         membership.status = 'inactive'
         membership.save()
         messages.success(request, f'Membership for {membership.member.get_full_name()} has been deactivated.')
-    return redirect('gym_admin_dashboard')
+    return redirect('accounts:gym_admin_dashboard')
 
 @login_required
-@user_passes_test(is_gym_owner)
 def activate_membership(request, membership_id):
     if request.method == 'POST':
         membership = get_object_or_404(GymMembership, id=membership_id, gym__owner=request.user)
         membership.status = 'active'
         membership.save()
         messages.success(request, f'Membership for {membership.member.get_full_name()} has been reactivated.')
-    return redirect('gym_admin_dashboard')
+    return redirect('accounts:gym_admin_dashboard')
 
 @login_required
-@user_passes_test(is_gym_owner)
 def upload_video(request):
     if request.method == 'POST':
         # Handle video upload

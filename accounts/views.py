@@ -15,7 +15,7 @@ def register_view(request):
             user = form.save()
             login(request, user)
             if user.user_type == 'owner':
-                return redirect('gym_profile_setup')
+                return redirect('accounts:gym_profile_setup')
             return redirect('marketing:landing')
     else:
         form = CustomUserCreationForm()
@@ -23,26 +23,38 @@ def register_view(request):
 
 def login_view(request):
     if request.method == 'POST':
+        print(f"Received POST request: {request.POST}")
         form = CustomAuthenticationForm(request, data=request.POST)
+        print(f"Form data: {request.POST}")
+        print(f"Form is valid: {form.is_valid()}")
+        if not form.is_valid():
+            print(f"Form errors: {form.errors}")
         if form.is_valid():
             user = form.get_user()
+            print(f"Authenticated user: {user.email}, type: {user.user_type}")
             login(request, user)
             if user.user_type == 'owner':
+                print("User is owner, checking for profile")
                 # Check if gym owner has a profile
                 try:
                     user.gym_profile
-                    return redirect('gym_dashboard')
+                    print("Found gym profile, redirecting to dashboard")
+                    return redirect('accounts:gym_dashboard')
                 except GymProfile.DoesNotExist:
-                    return redirect('gym_profile_setup')
+                    print("No gym profile found, redirecting to setup")
+                    return redirect('accounts:gym_profile_setup')
+            print("User is not owner, redirecting to landing")
             return redirect('marketing:landing')
     else:
         form = CustomAuthenticationForm(request)
-    return render(request, 'accounts/login.html', {'form': form})
+    
+    template_name = 'accounts/test_login.html' if 'test' in request.GET else 'accounts/login.html'
+    return render(request, template_name, {'form': form})
 
 def logout_view(request):
     logout(request)
     messages.success(request, 'You have been logged out.')
-    return redirect('login')
+    return redirect('accounts:login')
 
 @login_required
 def password_change_view(request):

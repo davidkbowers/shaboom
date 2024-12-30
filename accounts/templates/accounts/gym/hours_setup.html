@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load form_filters %}
+{% load widget_tweaks %}
 
 {% block content %}
 <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -28,7 +28,7 @@
                         <h4 class="text-base font-medium text-gray-900">{{ day.name }}</h4>
                         <div class="flex items-center">
                             <label class="inline-flex items-center">
-                                {{ day.is_closed|addclass:"h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded" }}
+                                {{ day.is_closed|add_class:"h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded" }}
                                 <span class="ml-2 text-sm text-gray-600">Closed</span>
                             </label>
                         </div>
@@ -38,14 +38,14 @@
                         <div>
                             <label for="{{ day.open_time.id_for_label }}" class="block text-sm font-medium text-gray-700">Opening Time</label>
                             <div class="mt-1">
-                                {{ day.open_time|addclass:"block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" }}
+                                {{ day.open_time|add_class:"block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" }}
                             </div>
                         </div>
 
                         <div>
                             <label for="{{ day.close_time.id_for_label }}" class="block text-sm font-medium text-gray-700">Closing Time</label>
                             <div class="mt-1">
-                                {{ day.close_time|addclass:"block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" }}
+                                {{ day.close_time|add_class:"block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" }}
                             </div>
                         </div>
                     </div>

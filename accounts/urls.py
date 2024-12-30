@@ -1,6 +1,8 @@
 from django.urls import path
 from . import views, views_gym, views_member
 
+app_name = 'accounts'
+
 urlpatterns = [
     # Authentication URLs
     path('register/', views.register_view, name='register'),

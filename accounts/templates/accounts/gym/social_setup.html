@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load form_filters %}
+{% load widget_tweaks %}
 
 {% block content %}
 <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -52,7 +52,7 @@
                         </div>
                     </label>
                     <div class="mt-1">
-                        {{ field|addclass:"mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" }}
+                        {{ field|add_class:"mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" }}
                     </div>
                 </div>
                 {% endfor %}

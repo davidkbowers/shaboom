@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load widget_tweaks %}
 
 {% block content %}
 <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -27,7 +28,7 @@
                         Location Name
                     </label>
                     <div class="mt-1">
-                        {{ form.name|addclass:"block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" }}
+                        {{ form.name|add_class:"block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" }}
                     </div>
                     {% if form.name.errors %}
                         <p class="mt-2 text-sm text-red-600">{{ form.name.errors }}</p>
@@ -39,7 +40,7 @@
                         Address
                     </label>
                     <div class="mt-1">
-                        {{ form.address|addclass:"block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" }}
+                        {{ form.address|add_class:"block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" }}
                     </div>
                     {% if form.address.errors %}
                         <p class="mt-2 text-sm text-red-600">{{ form.address.errors }}</p>
@@ -52,7 +53,7 @@
                             Phone
                         </label>
                         <div class="mt-1">
-                            {{ form.phone|addclass:"block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" }}
+                            {{ form.phone|add_class:"block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" }}
                         </div>
                         {% if form.phone.errors %}
                             <p class="mt-2 text-sm text-red-600">{{ form.phone.errors }}</p>
@@ -64,7 +65,7 @@
                             Email
                         </label>
                         <div class="mt-1">
-                            {{ form.email|addclass:"block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" }}
+                            {{ form.email|add_class:"block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" }}
                         </div>
                         {% if form.email.errors %}
                             <p class="mt-2 text-sm text-red-600">{{ form.email.errors }}</p>
@@ -74,7 +75,7 @@
 
                 <div class="relative flex items-start">
                     <div class="flex h-5 items-center">
-                        {{ form.is_main_location|addclass:"h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" }}
+                        {{ form.is_main_location|add_class:"h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" }}
                     </div>
                     <div class="ml-3 text-sm">
                         <label for="{{ form.is_main_location.id_for_label }}" class="font-medium text-gray-700">

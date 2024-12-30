@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-2xl font-bold mb-4">{{ gym_profile.business_name }}</h1>
+    <p class="mb-6">{{ gym_profile.business_description }}</p>
+    
+    <div class="mb-8">
+        <h2 class="text-xl font-semibold mb-4">Quick Links</h2>
+        <div class="space-y-2">
+            <a href="{% url 'accounts:gym_admin_dashboard' %}" class="block px-4 py-2 bg-blue-500 text-white rounded">
+                Manage Members
+            </a>
+            <a href="{% url 'accounts:upload_video' %}" class="block px-4 py-2 bg-blue-500 text-white rounded">
+                Upload Video
+            </a>
+        </div>
+    </div>
+    
+    <div class="mb-8">
+        <h2 class="text-xl font-semibold mb-4">Business Hours</h2>
+        <pre>{{ gym_profile.business_hours|pprint }}</pre>
+    </div>
+    
+    <div>
+        <h2 class="text-xl font-semibold mb-4">Locations</h2>
+        {% for location in gym_profile.locations.all %}
+            <div class="mb-4 p-4 border rounded">
+                <h3 class="font-semibold">{{ location.name }}</h3>
+                <p>{{ location.address }}</p>
+                <p>{{ location.phone }}</p>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

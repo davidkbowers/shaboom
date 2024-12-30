@@ -20,11 +20,8 @@
                                 Visit Website
                             </a>
                         {% endif %}
-                        <a href="{% url 'gym_admin_dashboard' %}" class="inline-flex items-center px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors">
-                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
-                            </svg>
-                            Admin Dashboard
+                        <a href="{% url 'accounts:gym_admin_dashboard' %}" class="inline-flex items-center px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors">
+                            Manage Members
                         </a>
                     </div>
                 </div>
@@ -104,7 +101,7 @@
                 </div>
                 <div class="p-6">
                     <div class="space-y-2">
-                        <a href="{% url 'upload_video' %}" class="block w-full px-4 py-3 text-sm font-medium text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-md transition-colors">
+                        <a href="{% url 'accounts:upload_video' %}" class="block w-full px-4 py-3 text-sm font-medium text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-md transition-colors">
                             Upload New Video
                         </a>
                         <a href="#" class="block w-full px-4 py-3 text-sm font-medium text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-md transition-colors">
