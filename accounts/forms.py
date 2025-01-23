@@ -16,43 +16,44 @@ class CustomUserCreationForm(UserCreationForm):
         required=True,
         widget=forms.TextInput(attrs={'class': 'form-control'})
     )
-    user_type = forms.ChoiceField(
-        choices=User.USER_TYPE_CHOICES,
-        widget=forms.RadioSelect,
-        initial='member'
-    )
-    gym_name = forms.CharField(
+    studio_name = forms.CharField(
         max_length=255,
-        required=False,
+        required=True,
         widget=forms.TextInput(attrs={'class': 'form-control'})
     )
     phone_number = forms.CharField(
         max_length=20,
-        required=False,
+        required=True,
         widget=forms.TextInput(attrs={'class': 'form-control'})
     )
     address = forms.CharField(
-        required=False,
+        required=True,
         widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 3})
     )
     email = forms.EmailField(required=True, widget=forms.EmailInput(attrs={'class': 'form-control'}))
 
     class Meta:
         model = User
-        fields = ('email', 'first_name', 'last_name', 'user_type', 'gym_name', 'phone_number', 'address', 'password1', 'password2')
+        fields = ('email', 'first_name', 'last_name', 'studio_name', 'phone_number', 'address', 'password1', 'password2')
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['password1'].widget.attrs['class'] = 'form-control'
         self.fields['password2'].widget.attrs['class'] = 'form-control'
 
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.user_type = 'owner'
+        if commit:
+            user.save()
+        return user
+
     def clean(self):
         cleaned_data = super().clean()
-        user_type = cleaned_data.get('user_type')
-        gym_name = cleaned_data.get('gym_name')
+        studio_name = cleaned_data.get('studio_name')
         
-        if user_type == 'owner' and not gym_name:
-            self.add_error('gym_name', 'Gym name is required for gym owners')
+        if not studio_name:
+            self.add_error('studio_name', 'Studio name is required for studio owners')
         
         return cleaned_data
 

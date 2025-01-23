@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load widget_tweaks %}
 
 {% block title %}Sign Up - Shaboom{% endblock %}
 
@@ -9,7 +10,7 @@
             Create your account
         </h2>
         <p class="mt-2 text-center text-sm text-gray-600">
-            Join Shaboom and start managing your gym today
+            Join Shaboom and start managing your studio today
         </p>
     </div>
 
@@ -21,7 +22,7 @@
                 <div>
                     <label for="id_email" class="block text-sm font-medium text-gray-700">Email</label>
                     <div class="mt-1">
-                        {{ form.email }}
+                        {% render_field form.email class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500" %}
                     </div>
                     {% if form.email.errors %}
                     <p class="mt-2 text-sm text-red-600">{{ form.email.errors.0 }}</p>
@@ -31,7 +32,7 @@
                 <div>
                     <label for="id_first_name" class="block text-sm font-medium text-gray-700">First Name</label>
                     <div class="mt-1">
-                        {{ form.first_name }}
+                        {% render_field form.first_name class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500" %}
                     </div>
                     {% if form.first_name.errors %}
                     <p class="mt-2 text-sm text-red-600">{{ form.first_name.errors.0 }}</p>
@@ -41,7 +42,7 @@
                 <div>
                     <label for="id_last_name" class="block text-sm font-medium text-gray-700">Last Name</label>
                     <div class="mt-1">
-                        {{ form.last_name }}
+                        {% render_field form.last_name class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500" %}
                     </div>
                     {% if form.last_name.errors %}
                     <p class="mt-2 text-sm text-red-600">{{ form.last_name.errors.0 }}</p>
@@ -49,51 +50,39 @@
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium text-gray-700">User Type</label>
+                    <label for="id_studio_name" class="block text-sm font-medium text-gray-700">Studio Name</label>
                     <div class="mt-1">
-                        {{ form.user_type }}
+                        {% render_field form.gym_name class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500" %}
                     </div>
-                    {% if form.user_type.errors %}
-                    <p class="mt-2 text-sm text-red-600">{{ form.user_type.errors.0 }}</p>
+                    {% if form.gym_name.errors %}
+                    <p class="mt-2 text-sm text-red-600">{{ form.gym_name.errors.0 }}</p>
                     {% endif %}
                 </div>
 
-                <div id="gym_fields" style="display: none;">
-                    <div>
-                        <label for="id_gym_name" class="block text-sm font-medium text-gray-700">Gym Name</label>
-                        <div class="mt-1">
-                            {{ form.gym_name }}
-                        </div>
-                        {% if form.gym_name.errors %}
-                        <p class="mt-2 text-sm text-red-600">{{ form.gym_name.errors.0 }}</p>
-                        {% endif %}
+                <div>
+                    <label for="id_phone_number" class="block text-sm font-medium text-gray-700">Phone Number</label>
+                    <div class="mt-1">
+                        {% render_field form.phone_number class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500" %}
                     </div>
+                    {% if form.phone_number.errors %}
+                    <p class="mt-2 text-sm text-red-600">{{ form.phone_number.errors.0 }}</p>
+                    {% endif %}
+                </div>
 
-                    <div>
-                        <label for="id_phone_number" class="block text-sm font-medium text-gray-700">Phone Number</label>
-                        <div class="mt-1">
-                            {{ form.phone_number }}
-                        </div>
-                        {% if form.phone_number.errors %}
-                        <p class="mt-2 text-sm text-red-600">{{ form.phone_number.errors.0 }}</p>
-                        {% endif %}
+                <div>
+                    <label for="id_address" class="block text-sm font-medium text-gray-700">Address</label>
+                    <div class="mt-1">
+                        {% render_field form.address class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500" %}
                     </div>
-
-                    <div>
-                        <label for="id_address" class="block text-sm font-medium text-gray-700">Address</label>
-                        <div class="mt-1">
-                            {{ form.address }}
-                        </div>
-                        {% if form.address.errors %}
-                        <p class="mt-2 text-sm text-red-600">{{ form.address.errors.0 }}</p>
-                        {% endif %}
-                    </div>
+                    {% if form.address.errors %}
+                    <p class="mt-2 text-sm text-red-600">{{ form.address.errors.0 }}</p>
+                    {% endif %}
                 </div>
 
                 <div>
                     <label for="id_password1" class="block text-sm font-medium text-gray-700">Password</label>
                     <div class="mt-1">
-                        {{ form.password1 }}
+                        {% render_field form.password1 class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500" %}
                     </div>
                     {% if form.password1.errors %}
                     <p class="mt-2 text-sm text-red-600">{{ form.password1.errors.0 }}</p>
@@ -103,7 +92,7 @@
                 <div>
                     <label for="id_password2" class="block text-sm font-medium text-gray-700">Confirm Password</label>
                     <div class="mt-1">
-                        {{ form.password2 }}
+                        {% render_field form.password2 class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500" %}
                     </div>
                     {% if form.password2.errors %}
                     <p class="mt-2 text-sm text-red-600">{{ form.password2.errors.0 }}</p>
@@ -129,7 +118,7 @@
                     </div>
                 </div>
                 <div class="mt-6">
-                    <a href="{% url 'login' %}" class="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+                    <a href="{% url 'accounts:login' %}" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-indigo-600 bg-white hover:bg-gray-50">
                         Sign in
                     </a>
                 </div>
@@ -137,28 +126,4 @@
         </div>
     </div>
 </div>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const userTypeField = document.querySelector('input[name="user_type"]');
-    const gymFields = document.getElementById('gym_fields');
-
-    function toggleGymFields() {
-        const selectedValue = document.querySelector('input[name="user_type"]:checked')?.value;
-        if (selectedValue === 'owner') {
-            gymFields.style.display = 'block';
-        } else {
-            gymFields.style.display = 'none';
-        }
-    }
-
-    // Add change event listener to all radio buttons
-    document.querySelectorAll('input[name="user_type"]').forEach(radio => {
-        radio.addEventListener('change', toggleGymFields);
-    });
-
-    // Initial check
-    toggleGymFields();
-});
-</script>
 {% endblock %}

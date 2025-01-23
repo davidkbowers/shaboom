@@ -29,14 +29,14 @@ class CustomUserManager(BaseUserManager):
 
 class CustomUser(AbstractUser):
     USER_TYPE_CHOICES = (
-        ('member', 'Gym Member'),
-        ('owner', 'Gym Owner'),
+        ('member', 'Studio Member'),
+        ('owner', 'Studio Owner'),
     )
 
     username = None
     email = models.EmailField(_('email address'), unique=True)
     user_type = models.CharField(max_length=10, choices=USER_TYPE_CHOICES, default='member')
-    gym_name = models.CharField(max_length=255, blank=True, null=True)
+    studio_name = models.CharField(max_length=255, blank=True, null=True)
     phone_number = models.CharField(max_length=20, blank=True, null=True)
     address = models.TextField(blank=True, null=True)
     onboarding_completed = models.BooleanField(default=False)
@@ -47,23 +47,23 @@ class CustomUser(AbstractUser):
     objects = CustomUserManager()
 
     def __str__(self):
-        if self.user_type == 'owner' and self.gym_name:
-            return f"{self.email} ({self.gym_name})"
+        if self.user_type == 'owner' and self.studio_name:
+            return f"{self.email} ({self.studio_name})"
         return self.email
 
     @property
-    def is_gym_owner(self):
+    def is_studio_owner(self):
         return self.user_type == 'owner'
 
     def get_absolute_url(self):
-        return reverse('gym_profile') if self.is_gym_owner else reverse('home')
+        return reverse('studio_profile') if self.is_studio_owner else reverse('home')
 
-class GymProfile(models.Model):
-    owner = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='gym_profile')
+class StudioProfile(models.Model):
+    owner = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='studio_profile')
     business_name = models.CharField(max_length=255)
     business_description = models.TextField()
     website = models.URLField(blank=True, null=True)
-    logo = models.ImageField(upload_to='gym_logos/', blank=True, null=True)
+    logo = models.ImageField(upload_to='studio_logos/', blank=True, null=True)
     established_date = models.DateField(blank=True, null=True)
     business_hours = models.JSONField(default=dict)
     amenities = models.JSONField(default=list)
@@ -74,8 +74,8 @@ class GymProfile(models.Model):
     def __str__(self):
         return f"{self.business_name} - {self.owner.email}"
 
-class GymLocation(models.Model):
-    gym = models.ForeignKey(GymProfile, on_delete=models.CASCADE, related_name='locations')
+class StudioLocation(models.Model):
+    studio = models.ForeignKey(StudioProfile, on_delete=models.CASCADE, related_name='locations')
     name = models.CharField(max_length=255)
     address = models.TextField()
     phone = models.CharField(max_length=20)
@@ -84,20 +84,20 @@ class GymLocation(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        unique_together = [['gym', 'is_main_location']]
+        unique_together = [['studio', 'is_main_location']]
 
     def __str__(self):
-        return f"{self.name} - {self.gym.business_name}"
+        return f"{self.name} - {self.studio.business_name}"
 
-class GymMembership(models.Model):
+class StudioMembership(models.Model):
     MEMBERSHIP_STATUS = (
         ('active', 'Active'),
         ('inactive', 'Inactive'),
         ('pending', 'Pending Approval'),
     )
 
-    gym = models.ForeignKey(GymProfile, on_delete=models.CASCADE, related_name='memberships')
-    member = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='gym_memberships')
+    studio = models.ForeignKey(StudioProfile, on_delete=models.CASCADE, related_name='memberships')
+    member = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='studio_memberships')
     status = models.CharField(max_length=20, choices=MEMBERSHIP_STATUS, default='pending')
     start_date = models.DateField(auto_now_add=True)
     end_date = models.DateField(null=True, blank=True)
@@ -105,7 +105,7 @@ class GymMembership(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        unique_together = [['gym', 'member']]
+        unique_together = [['studio', 'member']]
 
     def __str__(self):
-        return f"{self.member.email} at {self.gym.business_name}"
+        return f"{self.member.email} at {self.studio.business_name}"

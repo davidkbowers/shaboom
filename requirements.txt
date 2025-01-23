@@ -11,6 +11,7 @@ click-repl==0.3.0
 decorator==5.1.1
 Django==5.1.4
 django-storages==1.14.4
+django-widget-tweaks==1.5.0
 imageio==2.36.1
 imageio-ffmpeg==0.5.1
 jmespath==1.0.1

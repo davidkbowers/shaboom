@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
 from .forms import CustomUserCreationForm, CustomPasswordChangeForm, CustomAuthenticationForm
-from .models import GymProfile  # Import GymProfile model
+from .models import StudioProfile  # Import StudioProfile model
 
 # Create your views here.
 
@@ -14,9 +14,7 @@ def register_view(request):
         if form.is_valid():
             user = form.save()
             login(request, user)
-            if user.user_type == 'owner':
-                return redirect('accounts:gym_profile_setup')
-            return redirect('marketing:landing')
+            return redirect('accounts:studio_profile_setup')
     else:
         form = CustomUserCreationForm()
     return render(request, 'accounts/register.html', {'form': form})
@@ -35,14 +33,14 @@ def login_view(request):
             login(request, user)
             if user.user_type == 'owner':
                 print("User is owner, checking for profile")
-                # Check if gym owner has a profile
+                # Check if studio owner has a profile
                 try:
-                    user.gym_profile
-                    print("Found gym profile, redirecting to dashboard")
-                    return redirect('accounts:gym_dashboard')
-                except GymProfile.DoesNotExist:
-                    print("No gym profile found, redirecting to setup")
-                    return redirect('accounts:gym_profile_setup')
+                    user.studio_profile
+                    print("Found studio profile, redirecting to dashboard")
+                    return redirect('accounts:studio_dashboard')
+                except StudioProfile.DoesNotExist:
+                    print("No studio profile found, redirecting to setup")
+                    return redirect('accounts:studio_profile_setup')
             print("User is not owner, redirecting to landing")
             return redirect('marketing:landing')
     else:
