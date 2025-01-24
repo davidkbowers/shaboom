@@ -21,20 +21,11 @@ class CustomUserCreationForm(UserCreationForm):
         required=True,
         widget=forms.TextInput(attrs={'class': 'form-control'})
     )
-    phone_number = forms.CharField(
-        max_length=20,
-        required=True,
-        widget=forms.TextInput(attrs={'class': 'form-control'})
-    )
-    address = forms.CharField(
-        required=True,
-        widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 3})
-    )
     email = forms.EmailField(required=True, widget=forms.EmailInput(attrs={'class': 'form-control'}))
 
     class Meta:
         model = User
-        fields = ('email', 'first_name', 'last_name', 'studio_name', 'phone_number', 'address', 'password1', 'password2')
+        fields = ('email', 'first_name', 'last_name', 'studio_name', 'password1', 'password2')
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
