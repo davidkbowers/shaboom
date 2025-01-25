@@ -61,13 +61,34 @@ def studio_hours_setup(request):
     if request.method == 'POST':
         form = BusinessHoursForm(request.POST)
         if form.is_valid():
-            hours_data = form.cleaned_data
-            studio_profile.business_hours = hours_data
+            hours = {}
+            for day, _ in form.DAYS_OF_WEEK:
+                is_closed = form.cleaned_data.get(f'{day}_closed', False)
+                if is_closed:
+                    hours[day] = {'closed': True}
+                else:
+                    open_time = form.cleaned_data.get(f'{day}_open')
+                    close_time = form.cleaned_data.get(f'{day}_close')
+                    hours[day] = {
+                        'open': open_time.strftime('%H:%M') if open_time else None,
+                        'close': close_time.strftime('%H:%M') if close_time else None,
+                        'closed': False
+                    }
+            
+            studio_profile.business_hours = hours
             studio_profile.save()
-            messages.success(request, 'Business hours updated successfully!')
+            messages.success(request, 'Business hours saved successfully!')
             return redirect('accounts:studio_location_setup')
     else:
-        form = BusinessHoursForm(initial=studio_profile.business_hours)
+        initial = {}
+        if studio_profile.business_hours:
+            for day, hours in studio_profile.business_hours.items():
+                if hours.get('closed'):
+                    initial[f'{day}_closed'] = True
+                else:
+                    initial[f'{day}_open'] = hours.get('open')
+                    initial[f'{day}_close'] = hours.get('close')
+        form = BusinessHoursForm(initial=initial)
     
     context = {'form': form}
     return render(request, 'accounts/studio/hours_setup.html', context)

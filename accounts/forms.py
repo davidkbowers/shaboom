@@ -88,3 +88,44 @@ class CustomPasswordChangeForm(PasswordChangeForm):
         self.fields['old_password'].widget.attrs['class'] = 'form-control'
         self.fields['new_password1'].widget.attrs['class'] = 'form-control'
         self.fields['new_password2'].widget.attrs['class'] = 'form-control'
+
+class BusinessHoursForm(forms.Form):
+    DAYS_OF_WEEK = [
+        ('monday', 'Monday'),
+        ('tuesday', 'Tuesday'),
+        ('wednesday', 'Wednesday'),
+        ('thursday', 'Thursday'),
+        ('friday', 'Friday'),
+        ('saturday', 'Saturday'),
+        ('sunday', 'Sunday'),
+    ]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for day, day_name in self.DAYS_OF_WEEK:
+            self.fields[f'{day}_closed'] = forms.BooleanField(required=False, label=f'{day_name} Closed')
+            self.fields[f'{day}_open'] = forms.TimeField(
+                required=False,
+                widget=forms.TimeInput(attrs={'type': 'time'}),
+                label=f'{day_name} Opening Time'
+            )
+            self.fields[f'{day}_close'] = forms.TimeField(
+                required=False,
+                widget=forms.TimeInput(attrs={'type': 'time'}),
+                label=f'{day_name} Closing Time'
+            )
+
+    def clean(self):
+        cleaned_data = super().clean()
+        for day, _ in self.DAYS_OF_WEEK:
+            is_closed = cleaned_data.get(f'{day}_closed')
+            open_time = cleaned_data.get(f'{day}_open')
+            close_time = cleaned_data.get(f'{day}_close')
+
+            if not is_closed and (not open_time or not close_time):
+                raise forms.ValidationError(f'Please specify both opening and closing times for {day} or mark it as closed.')
+            
+            if open_time and close_time and open_time >= close_time:
+                raise forms.ValidationError(f'Opening time must be before closing time for {day}.')
+
+        return cleaned_data

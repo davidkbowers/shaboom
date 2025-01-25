@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="bg-white shadow rounded-lg overflow-hidden">
+        <div class="px-4 py-5 sm:px-6 border-b border-gray-200">
+            <h3 class="text-lg leading-6 font-medium text-gray-900">Business Hours Setup</h3>
+            <p class="mt-1 text-sm text-gray-500">Set your studio's operating hours for each day of the week.</p>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="px-4 py-5 sm:px-6">
+            <div class="relative">
+                <div class="overflow-hidden h-2 text-xs flex rounded bg-gray-200">
+                    <div class="w-3/4 shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-indigo-600"></div>
+                </div>
+                <div class="mt-2 text-sm text-gray-600 text-center">Step 3 of 4</div>
+            </div>
+        </div>
+
+        <div class="px-4 py-5 sm:p-6">
+            <form method="post" class="space-y-6">
+                {% csrf_token %}
+                {% for day in form.days %}
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between">
+                        <h4 class="text-base font-medium text-gray-900">{{ day.name }}</h4>
+                        <div class="flex items-center">
+                            <label class="inline-flex items-center">
+                                {{ day.is_closed|add_class:"h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded" }}
+                                <span class="ml-2 text-sm text-gray-600">Closed</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                        <div>
+                            <label for="{{ day.open_time.id_for_label }}" class="block text-sm font-medium text-gray-700">Opening Time</label>
+                            <div class="mt-1">
+                                {{ day.open_time|add_class:"block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" }}
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="{{ day.close_time.id_for_label }}" class="block text-sm font-medium text-gray-700">Closing Time</label>
+                            <div class="mt-1">
+                                {{ day.close_time|add_class:"block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+
+                <div class="pt-6">
+                    <button type="submit" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        Continue
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
