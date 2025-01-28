@@ -1,0 +1,144 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ playlist.name }} - {{ request.user.studio_name }}{% endblock %}
+
+{% block extra_css %}
+<link href="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.css" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="min-h-full bg-gray-50">
+    <!-- Page header -->
+    <header class="bg-white shadow">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div class="md:flex md:items-center md:justify-between">
+                <div class="flex-1 min-w-0">
+                    <nav class="flex" aria-label="Breadcrumb">
+                        <ol role="list" class="flex items-center space-x-4">
+                            <li>
+                                <div>
+                                    <a href="{% url 'videos:playlist_list' %}" class="text-gray-400 hover:text-gray-500">
+                                        Playlists
+                                    </a>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="flex items-center">
+                                    <svg class="flex-shrink-0 h-5 w-5 text-gray-300" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                                        <path d="M5.555 17.776l8-16 .894.448-8 16-.894-.448z" />
+                                    </svg>
+                                    <span class="ml-4 text-sm font-medium text-gray-500">{{ playlist.name }}</span>
+                                </div>
+                            </li>
+                        </ol>
+                    </nav>
+                    <h1 class="mt-2 text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
+                        {{ playlist.name }}
+                    </h1>
+                    {% if playlist.description %}
+                    <p class="mt-1 text-sm text-gray-500">{{ playlist.description }}</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+            <!-- Add Video Form -->
+            <div class="px-4 py-5 sm:p-6 border-b border-gray-200">
+                <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">Add Video to Playlist</h3>
+                <form method="post" class="space-y-4">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        Add Video
+                    </button>
+                </form>
+            </div>
+
+            <!-- Videos List -->
+            <div class="px-4 py-5 sm:p-6">
+                <div id="playlist-videos" class="space-y-4">
+                    {% for playlist_video in playlist_videos %}
+                    <div class="relative rounded-lg border border-gray-300 bg-white px-6 py-5 shadow-sm flex items-center space-x-3" data-video-id="{{ playlist_video.video.id }}">
+                        <div class="flex-shrink-0">
+                            <div class="cursor-move">
+                                <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                    <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <a href="{% url 'videos:video_detail' playlist_video.video.id %}" class="focus:outline-none">
+                                <span class="absolute inset-0" aria-hidden="true"></span>
+                                <p class="text-sm font-medium text-gray-900">{{ playlist_video.video.title }}</p>
+                                <p class="text-sm text-gray-500 truncate">{{ playlist_video.video.description }}</p>
+                            </a>
+                        </div>
+                        <div class="flex-shrink-0">
+                            <button type="button" onclick="removeVideo({{ playlist_video.video.id }})" class="text-red-600 hover:text-red-900">
+                                <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="text-center py-12">
+                        <svg class="mx-auto h-12 w-12 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                        </svg>
+                        <h3 class="mt-2 text-sm font-medium text-gray-900">No videos in this playlist</h3>
+                        <p class="mt-1 text-sm text-gray-500">Add videos using the form above.</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+<script>
+    // Initialize Sortable
+    var el = document.getElementById('playlist-videos');
+    var sortable = Sortable.create(el, {
+        animation: 150,
+        onEnd: function (evt) {
+            var videoIds = Array.from(el.children).map(function(item) {
+                return item.dataset.videoId;
+            });
+            
+            // Send the new order to the server
+            fetch("{% url 'videos:playlist_video_reorder' playlist.id %}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: 'video_order=' + videoIds.join('&video_order=')
+            });
+        }
+    });
+
+    // Function to remove a video from the playlist
+    function removeVideo(videoId) {
+        if (confirm('Are you sure you want to remove this video from the playlist?')) {
+            fetch("{% url 'videos:playlist_video_remove' playlist.id 0 %}".replace('0', videoId), {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'
+                }
+            }).then(function(response) {
+                if (response.ok) {
+                    window.location.reload();
+                }
+            });
+        }
+    }
+</script>
+{% endblock %}

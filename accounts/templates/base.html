@@ -36,9 +36,19 @@
                         <a href="{% url 'marketing:landing' %}" class="text-2xl font-bold text-indigo-600">Shaboom</a>
                     </div>
                     {% if user.is_authenticated %}
-                    <div class="hidden md:ml-6 md:flex md:space-x-8">
+                    <div class="hidden md:ml-6 md:flex md:space-x-8 md:items-end">
                         {% block navigation_items %}
-                        <!-- Add your app-specific navigation items here -->
+                        {% if user.is_studio_owner %}
+                            <a href="{% url 'accounts:studio_dashboard' %}" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium h-full">Dashboard</a>
+                            <a href="{% url 'accounts:studio_admin_dashboard' %}" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium h-full">Admin</a>
+                            <a href="{% url 'videos:video_list' %}" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium h-full">Videos</a>
+                            <a href="{% url 'videos:category_list' %}" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium h-full">Categories</a>
+                            <a href="{% url 'videos:playlist_list' %}" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium h-full">Playlists</a>
+                            <a href="{% url 'videos:upload_video' %}" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium h-full">Upload Video</a>
+                        {% else %}
+                            <a href="{% url 'videos:video_list' %}" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium h-full">Videos</a>
+                            <a href="{% url 'accounts:profile' %}" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium h-full">Profile</a>
+                        {% endif %}
                         {% endblock %}
                     </div>
                     {% endif %}
@@ -84,10 +94,22 @@
             <div class="px-2 pt-2 pb-3 space-y-1">
                 {% if user.is_authenticated %}
                     {% block mobile_navigation_items %}
-                    <!-- Add your app-specific mobile navigation items here -->
+                    {% if user.is_studio_owner %}
+                        <a href="{% url 'accounts:studio_dashboard' %}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50">Dashboard</a>
+                        <a href="{% url 'accounts:studio_admin_dashboard' %}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50">Admin</a>
+                        <a href="{% url 'videos:video_list' %}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50">Videos</a>
+                        <a href="{% url 'videos:category_list' %}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50">Categories</a>
+                        <a href="{% url 'videos:playlist_list' %}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50">Playlists</a>
+                        <a href="{% url 'videos:upload_video' %}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50">Upload Video</a>
+                        <a href="{% url 'accounts:password_change' %}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50">Settings</a>
+                        <a href="{% url 'accounts:logout' %}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50">Logout</a>
+                    {% else %}
+                        <a href="{% url 'videos:video_list' %}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50">Videos</a>
+                        <a href="{% url 'accounts:profile' %}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50">My Profile</a>
+                        <a href="{% url 'accounts:password_change' %}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50">Settings</a>
+                        <a href="{% url 'accounts:logout' %}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50">Logout</a>
+                    {% endif %}
                     {% endblock %}
-                    <a href="{% url 'accounts:password_change' %}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50">Settings</a>
-                    <a href="{% url 'accounts:logout' %}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50">Logout</a>
                 {% else %}
                     <a href="{% url 'accounts:login' %}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50">Sign In</a>
                     <a href="{% url 'accounts:register' %}" class="block w-full text-center px-4 py-2 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Get Started</a>

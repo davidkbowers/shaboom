@@ -1,141 +1,228 @@
 {% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ studio_profile.business_name }} - Dashboard{% endblock %}
 
 {% block content %}
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    <!-- Studio Profile Section -->
-    <div class="bg-white rounded-lg shadow-sm mb-8">
-        <div class="p-6">
-            <div class="flex flex-col md:flex-row gap-6">
-                <div class="w-full md:w-1/6">
-                    {% if studio_profile.logo %}
-                        <img src="{{ studio_profile.logo.url }}" alt="{{ studio_profile.business_name }} Logo" class="w-full h-auto rounded-lg">
-                    {% endif %}
+<div class="min-h-full bg-gray-50">
+    <!-- Page header -->
+    <header class="bg-white shadow">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div class="md:flex md:items-center md:justify-between">
+                <div class="flex-1 min-w-0">
+                    <h1 class="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
+                        Welcome back, {{ request.user.get_full_name|default:studio_profile.business_name }}
+                    </h1>
                 </div>
-                <div class="flex-1">
-                    <h2 class="text-3xl font-bold text-gray-900 mb-2">{{ studio_profile.business_name }}</h2>
-                    <p class="text-lg text-gray-600 mb-4">{{ studio_profile.business_description }}</p>
-                    <div class="flex flex-wrap gap-3">
-                        {% if studio_profile.website %}
-                            <a href="{{ studio_profile.website }}" target="_blank" class="inline-flex items-center px-4 py-2 border border-indigo-600 text-indigo-600 rounded-md hover:bg-indigo-50 transition-colors">
-                                Visit Website
-                            </a>
-                        {% endif %}
-                        <a href="{% url 'accounts:studio_admin_dashboard' %}" class="inline-flex items-center px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors">
-                            Manage Members
-                        </a>
-                    </div>
+                <div class="mt-4 flex md:mt-0 md:ml-4 space-x-3">
+                    <a href="{% url 'videos:category_list' %}" class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        <svg class="-ml-1 mr-2 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z" />
+                        </svg>
+                        Categories
+                    </a>
+                    <a href="{% url 'videos:playlist_list' %}" class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        <svg class="-ml-1 mr-2 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z" />
+                        </svg>
+                        Playlists
+                    </a>
+                    <a href="{% url 'videos:upload_video' %}" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        <svg class="-ml-1 mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
+                        </svg>
+                        Upload New Video
+                    </a>
                 </div>
             </div>
         </div>
-    </div>
+    </header>
 
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <!-- Locations Section -->
-        <div class="lg:col-span-2">
-            <div class="bg-white rounded-lg shadow-sm mb-8">
-                <div class="border-b border-gray-200 px-6 py-4">
-                    <h4 class="text-lg font-semibold text-gray-900">Locations</h4>
-                </div>
-                <div class="p-6">
-                    {% for location in locations %}
-                        <div class="{% if not forloop.last %}mb-6 pb-6 border-b border-gray-200{% endif %}">
-                            <div class="flex items-center gap-2 mb-2">
-                                <h5 class="text-lg font-medium text-gray-900">{{ location.name }}</h5>
-                                {% if location.is_main_location %}
-                                    <span class="px-2 py-1 text-xs font-medium bg-indigo-100 text-indigo-800 rounded-full">Main Location</span>
-                                {% endif %}
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="grid grid-cols-1 gap-8 lg:grid-cols-2">
+            <!-- Quick Stats -->
+            <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
+                <!-- Total Members -->
+                <div class="bg-white overflow-hidden shadow rounded-lg">
+                    <div class="p-5">
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0">
+                                <svg class="h-6 w-6 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                                </svg>
                             </div>
-                            <p class="text-gray-600 mb-2">{{ location.address }}</p>
-                            <div class="text-sm text-gray-600">
-                                <p class="mb-1"><span class="font-medium">Phone:</span> {{ location.phone }}</p>
-                                {% if location.email %}
-                                    <p><span class="font-medium">Email:</span> {{ location.email }}</p>
-                                {% endif %}
+                            <div class="ml-5 w-0 flex-1">
+                                <dl>
+                                    <dt class="text-sm font-medium text-gray-500 truncate">
+                                        Total Members
+                                    </dt>
+                                    <dd class="flex items-baseline">
+                                        <div class="text-2xl font-semibold text-gray-900">
+                                            {{ active_members_count }}
+                                        </div>
+                                        <div class="ml-2 flex items-baseline text-sm font-semibold text-green-600">
+                                            <span class="sr-only">Active</span>
+                                        </div>
+                                    </dd>
+                                </dl>
                             </div>
                         </div>
-                    {% empty %}
-                        <p class="text-gray-600">No locations added yet.</p>
-                    {% endfor %}
+                    </div>
+                    <div class="bg-gray-50 px-5 py-3">
+                        <div class="text-sm">
+                            <a href="{% url 'accounts:studio_admin_dashboard' %}" class="font-medium text-indigo-600 hover:text-indigo-500">
+                                View all members
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Total Videos -->
+                <div class="bg-white overflow-hidden shadow rounded-lg">
+                    <div class="p-5">
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0">
+                                <svg class="h-6 w-6 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                                </svg>
+                            </div>
+                            <div class="ml-5 w-0 flex-1">
+                                <dl>
+                                    <dt class="text-sm font-medium text-gray-500 truncate">
+                                        Total Videos
+                                    </dt>
+                                    <dd class="flex items-baseline">
+                                        <div class="text-2xl font-semibold text-gray-900">
+                                            {{ videos_count }}
+                                        </div>
+                                    </dd>
+                                </dl>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 px-5 py-3">
+                        <div class="text-sm">
+                            <a href="{% url 'videos:video_list' %}" class="font-medium text-indigo-600 hover:text-indigo-500">
+                                View all videos
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <!-- Business Hours Section -->
-            <div class="bg-white rounded-lg shadow-sm">
-                <div class="border-b border-gray-200 px-6 py-4">
-                    <h4 class="text-lg font-semibold text-gray-900">Business Hours</h4>
+            <!-- Recent Activity -->
+            <div class="bg-white shadow sm:rounded-lg">
+                <div class="px-4 py-5 sm:p-6">
+                    <h3 class="text-lg leading-6 font-medium text-gray-900">
+                        Recent Activity
+                    </h3>
+                    <div class="mt-6 flow-root">
+                        <ul role="list" class="-mb-8">
+                            {% for membership in recent_memberships %}
+                            <li>
+                                <div class="relative pb-8">
+                                    {% if not forloop.last %}
+                                    <span class="absolute top-4 left-4 -ml-px h-full w-0.5 bg-gray-200" aria-hidden="true"></span>
+                                    {% endif %}
+                                    <div class="relative flex space-x-3">
+                                        <div>
+                                            <span class="h-8 w-8 rounded-full bg-blue-500 flex items-center justify-center ring-8 ring-white">
+                                                <svg class="h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                                    <path d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6zM16 7a1 1 0 10-2 0v1h-1a1 1 0 100 2h1v1a1 1 0 102 0v-1h1a1 1 0 100-2h-1V7z" />
+                                                </svg>
+                                            </span>
+                                        </div>
+                                        <div class="min-w-0 flex-1 pt-1.5 flex justify-between space-x-4">
+                                            <div>
+                                                <p class="text-sm text-gray-500">New member request from <span class="font-medium text-gray-900">{{ membership.member.get_full_name }}</span></p>
+                                            </div>
+                                            <div class="text-right text-sm whitespace-nowrap text-gray-500">
+                                                <time datetime="{{ membership.created_at|date:'c' }}">{{ membership.created_at|timesince }} ago</time>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                            {% empty %}
+                            <li class="text-center py-4">
+                                <p class="text-sm text-gray-500">No recent activity</p>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
                 </div>
-                <div class="p-6">
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full divide-y divide-gray-200">
-                            <thead>
-                                <tr>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Day</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Hours</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-gray-200">
-                                {% for day, hours in studio_profile.business_hours.items %}
-                                    <tr class="{% cycle 'bg-white' 'bg-gray-50' %}">
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ day|title }}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                                            {% if hours.closed %}
-                                                Closed
-                                            {% else %}
-                                                {{ hours.open }} - {{ hours.close }}
-                                            {% endif %}
+            </div>
+        </div>
+
+        <!-- Studio Locations -->
+        <div class="mt-8">
+            <div class="sm:flex sm:items-center">
+                <div class="sm:flex-auto">
+                    <h2 class="text-xl font-semibold text-gray-900">Studio Locations</h2>
+                    <p class="mt-2 text-sm text-gray-700">A list of all your studio locations and their contact information.</p>
+                </div>
+                <div class="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
+                    <a href="{% url 'accounts:studio_location_setup' %}" class="inline-flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 focus:ring-offset-2 sm:w-auto">
+                        Add location
+                    </a>
+                </div>
+            </div>
+            <div class="mt-8 flex flex-col">
+                <div class="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
+                    <div class="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
+                        <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
+                            <table class="min-w-full divide-y divide-gray-300">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">Location</th>
+                                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Address</th>
+                                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Phone</th>
+                                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Email</th>
+                                        <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-6">
+                                            <span class="sr-only">Edit</span>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-200 bg-white">
+                                    {% for location in locations %}
+                                    <tr>
+                                        <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6">
+                                            <div class="flex items-center">
+                                                <div class="ml-4">
+                                                    <div class="font-medium text-gray-900">{{ location.name }}</div>
+                                                    {% if location.is_main_location %}
+                                                    <div class="text-gray-500">Main Location</div>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                                            {{ location.address }}
+                                        </td>
+                                        <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                                            {{ location.phone }}
+                                        </td>
+                                        <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                                            {{ location.email }}
+                                        </td>
+                                        <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
+                                            <a href="#" class="text-indigo-600 hover:text-indigo-900">Edit</a>
                                         </td>
                                     </tr>
-                                {% empty %}
+                                    {% empty %}
                                     <tr>
-                                        <td colspan="2" class="px-6 py-4 text-sm text-gray-600">No business hours set.</td>
+                                        <td colspan="5" class="px-3 py-4 text-sm text-gray-500 text-center">
+                                            No locations added yet
+                                        </td>
                                     </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-
-        <!-- Social Media Section -->
-        <div class="lg:col-span-1">
-            <div class="bg-white rounded-lg shadow-sm">
-                <div class="border-b border-gray-200 px-6 py-4">
-                    <h4 class="text-lg font-semibold text-gray-900">Social Media</h4>
-                </div>
-                <div class="p-6">
-                    <div class="space-y-4">
-                        {% if studio_profile.facebook_url %}
-                            <a href="{{ studio_profile.facebook_url }}" target="_blank" class="flex items-center text-gray-600 hover:text-indigo-600">
-                                <svg class="h-5 w-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-                                </svg>
-                                Facebook
-                            </a>
-                        {% endif %}
-                        {% if studio_profile.instagram_url %}
-                            <a href="{{ studio_profile.instagram_url }}" target="_blank" class="flex items-center text-gray-600 hover:text-indigo-600">
-                                <svg class="h-5 w-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M12 0C8.74 0 8.333.015 7.053.072 5.775.132 4.905.333 4.14.63c-.789.306-1.459.717-2.126 1.384S.935 3.35.63 4.14C.333 4.905.131 5.775.072 7.053.012 8.333 0 8.74 0 12s.015 3.667.072 4.947c.06 1.277.261 2.148.558 2.913.306.788.717 1.459 1.384 2.126.667.666 1.336 1.079 2.126 1.384.766.296 1.636.499 2.913.558C8.333 23.988 8.74 24 12 24s3.667-.015 4.947-.072c1.277-.06 2.148-.262 2.913-.558.788-.306 1.459-.718 2.126-1.384.666-.667 1.079-1.335 1.384-2.126.296-.765.499-1.636.558-2.913.06-1.28.072-1.687.072-4.947s-.015-3.667-.072-4.947c-.06-1.277-.262-2.149-.558-2.913-.306-.789-.718-1.459-1.384-2.126C21.319 1.347 20.651.935 19.86.63c-.765-.297-1.636-.499-2.913-.558C15.667.012 15.26 0 12 0zm0 2.16c3.203 0 3.585.016 4.85.071 1.17.055 1.805.249 2.227.415.562.217.96.477 1.382.896.419.42.679.819.896 1.381.164.422.36 1.057.413 2.227.057 1.266.07 1.646.07 4.85s-.015 3.585-.074 4.85c-.061 1.17-.256 1.805-.421 2.227-.224.562-.479.96-.897 1.382-.419.419-.824.679-1.38.896-.42.164-1.065.36-2.235.413-1.274.057-1.649.07-4.859.07-3.211 0-3.586-.015-4.859-.074-1.171-.061-1.816-.256-2.236-.421-.569-.224-.96-.479-1.379-.897-.421-.419-.69-.824-.9-1.38-.165-.42-.359-1.065-.42-2.235-.045-1.26-.061-1.649-.061-4.844 0-3.196.016-3.586.061-4.861.061-1.17.255-1.814.42-2.234.21-.57.479-.96.9-1.381.419-.419.81-.689 1.379-.898.42-.166 1.051-.361 2.221-.421 1.275-.045 1.65-.06 4.859-.06l.045.03zm0 3.678c-3.405 0-6.162 2.76-6.162 6.162 0 3.405 2.76 6.162 6.162 6.162 3.405 0 6.162-2.76 6.162-6.162 0-3.405-2.76-6.162-6.162-6.162zM12 16c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm7.846-10.405c0 .795-.646 1.44-1.44 1.44-.795 0-1.44-.646-1.44-1.44 0-.794.646-1.439 1.44-1.439.793-.001 1.44.645 1.44 1.439z"/>
-                                </svg>
-                                Instagram
-                            </a>
-                        {% endif %}
-                        {% if studio_profile.twitter_url %}
-                            <a href="{{ studio_profile.twitter_url }}" target="_blank" class="flex items-center text-gray-600 hover:text-indigo-600">
-                                <svg class="h-5 w-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
-                                </svg>
-                                Twitter
-                            </a>
-                        {% endif %}
-                        {% if not studio_profile.facebook_url and not studio_profile.instagram_url and not studio_profile.twitter_url %}
-                            <p class="text-gray-600">No social media links added.</p>
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    </main>
 </div>
 {% endblock %}

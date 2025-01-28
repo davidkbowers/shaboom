@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block title %}Categories - {{ request.user.studio_name }}{% endblock %}
+
+{% block content %}
+<div class="min-h-full bg-gray-50">
+    <!-- Page header -->
+    <header class="bg-white shadow">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div class="md:flex md:items-center md:justify-between">
+                <div class="flex-1 min-w-0">
+                    <h1 class="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
+                        Video Categories
+                    </h1>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+            <!-- Add Category Form -->
+            <div class="px-4 py-5 sm:p-6 border-b border-gray-200">
+                <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">Add New Category</h3>
+                <form method="post" class="space-y-4">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        Add Category
+                    </button>
+                </form>
+            </div>
+
+            <!-- Categories List -->
+            <div class="px-4 py-5 sm:p-6">
+                <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                    {% for category in categories %}
+                    <div class="relative rounded-lg border border-gray-300 bg-white px-6 py-5 shadow-sm flex items-center space-x-3 hover:border-gray-400">
+                        <div class="flex-1 min-w-0">
+                            <a href="{% url 'videos:category_detail' category.id %}" class="focus:outline-none">
+                                <span class="absolute inset-0" aria-hidden="true"></span>
+                                <p class="text-sm font-medium text-gray-900 truncate">{{ category.name }}</p>
+                                <p class="text-sm text-gray-500 truncate">{{ category.videos.count }} videos</p>
+                            </a>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="col-span-full text-center py-12">
+                        <svg class="mx-auto h-12 w-12 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+                        </svg>
+                        <h3 class="mt-2 text-sm font-medium text-gray-900">No categories</h3>
+                        <p class="mt-1 text-sm text-gray-500">Get started by creating a new category above.</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+{% endblock %}

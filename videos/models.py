@@ -34,6 +34,7 @@ class Video(models.Model):
         on_delete=models.CASCADE,
         related_name='uploaded_videos'
     )
+    category = models.ForeignKey('Category', on_delete=models.SET_NULL, null=True, blank=True, related_name='videos')
 
     def __str__(self):
         return self.title
@@ -55,3 +56,63 @@ class VideoStream(models.Model):
 
     class Meta:
         unique_together = ('video', 'quality')
+
+    def __str__(self):
+        return f"{self.video.title} - {self.quality}"
+
+class Comment(models.Model):
+    video = models.ForeignKey(Video, on_delete=models.CASCADE, related_name='comments')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='video_comments')
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"Comment by {self.user.username} on {self.video.title}"
+
+class Category(models.Model):
+    name = models.CharField(max_length=100)
+    description = models.TextField(blank=True)
+    studio = models.ForeignKey('accounts.StudioProfile', on_delete=models.CASCADE, related_name='categories')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name_plural = 'Categories'
+        ordering = ['name']
+        unique_together = ['name', 'studio']
+
+    def __str__(self):
+        return self.name
+
+class Playlist(models.Model):
+    name = models.CharField(max_length=100)
+    description = models.TextField(blank=True)
+    studio = models.ForeignKey('accounts.StudioProfile', on_delete=models.CASCADE, related_name='playlists')
+    videos = models.ManyToManyField(Video, through='PlaylistVideo', related_name='playlists')
+    is_public = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-created_at']
+        unique_together = ['name', 'studio']
+
+    def __str__(self):
+        return self.name
+
+class PlaylistVideo(models.Model):
+    playlist = models.ForeignKey(Playlist, on_delete=models.CASCADE)
+    video = models.ForeignKey(Video, on_delete=models.CASCADE)
+    order = models.PositiveIntegerField(default=0)
+    added_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['order', 'added_at']
+        unique_together = ['playlist', 'video']
+
+    def __str__(self):
+        return f"{self.playlist.name} - {self.video.title}"
