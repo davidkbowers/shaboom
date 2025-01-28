@@ -16,10 +16,11 @@ class Video(models.Model):
     description = models.TextField(blank=True)
     file = models.FileField(
         upload_to='videos/original/',
-        validators=[FileExtensionValidator(allowed_extensions=['mp4', 'mov'])]
+        validators=[FileExtensionValidator(allowed_extensions=['mp4', 'mov', 'avi', 'mkv', 'wmv', 'flv', 'webm', 'm4v', '3gp'])]
     )
     compressed_file = models.FileField(upload_to='videos/compressed/', null=True, blank=True)
     thumbnail = models.ImageField(upload_to='videos/thumbnails/', null=True, blank=True)
+    all_thumbnails = models.JSONField(default=list, blank=True)  # Store list of all thumbnail paths
     duration = models.FloatField(null=True, blank=True)
     size = models.BigIntegerField(null=True, blank=True)  # in bytes
     processing_status = models.CharField(
