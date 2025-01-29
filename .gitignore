@@ -40,3 +40,13 @@ media/
 # OS
 .DS_Store
 Thumbs.db
+.env.dev
+.env.prod
+.env.prod.db
+accounts/migrations/0003_alter_gymmembership_unique_together_and_more.py
+videos/migrations/0002_comment.py
+videos/migrations/0003_category_video_category_playlist_playlistvideo_and_more.py
+videos/migrations/0004_video_all_thumbnails.py
+videos/templates/videos/upload.html.bak
+videos/templates/videos/backup/upload.html.bak
+.windsurfrules
