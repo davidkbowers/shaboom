@@ -67,10 +67,7 @@
                     </div>
                     {% else %}
                     <div class="flex items-center space-x-4">
-                        <a href="{% url 'accounts:login' %}" class="text-gray-500 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
-                            Sign In
-                        </a>
-                        <a href="{% url 'accounts:register' %}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        <a href="{% url 'accounts:plan_selection' %}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                             Get Started
                         </a>
                     </div>
@@ -111,8 +108,7 @@
                     {% endif %}
                     {% endblock %}
                 {% else %}
-                    <a href="{% url 'accounts:login' %}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50">Sign In</a>
-                    <a href="{% url 'accounts:register' %}" class="block w-full text-center px-4 py-2 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Get Started</a>
+                    <a href="{% url 'accounts:plan_selection' %}" class="block w-full text-center px-4 py-2 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Get Started</a>
                 {% endif %}
             </div>
         </div>
@@ -181,6 +177,11 @@
                             </a>
                         </li>
                         {% else %}
+                        <li>
+                            <a href="{% url 'accounts:plan_selection' %}" class="text-base text-gray-500 hover:text-gray-900">
+                                Get Started
+                            </a>
+                        </li>
                         <li>
                             <a href="{% url 'accounts:login' %}" class="text-base text-gray-500 hover:text-gray-900">
                                 Login

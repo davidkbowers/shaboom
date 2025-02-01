@@ -1,158 +1,112 @@
 {% extends 'base.html' %}
-{% load static %}
-
-{% block title %}{{ studio_profile.business_name }} - Dashboard{% endblock %}
+{% load widget_tweaks %}
 
 {% block content %}
-<div class="min-h-full bg-gray-50">
-    <!-- Page header -->
-    <header class="bg-white shadow">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-            <div class="md:flex md:items-center md:justify-between">
-                <div class="flex-1 min-w-0">
-                    <h1 class="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
-                        Welcome back, {{ request.user.get_full_name|default:studio_profile.business_name }}
-                    </h1>
-                </div>
-                <div class="mt-4 flex md:mt-0 md:ml-4 space-x-3">
-                    <a href="{% url 'videos:category_list' %}" class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                        <svg class="-ml-1 mr-2 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                            <path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z" />
+<div class="min-h-screen bg-gray-50 py-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Profile Header -->
+        <div class="bg-white shadow rounded-lg mb-8">
+            <div class="px-4 py-5 sm:p-6">
+                <div class="flex items-center space-x-4">
+                    {% if studio_profile.logo %}
+                    <img src="{{ studio_profile.logo.url }}" alt="Studio Logo" class="h-16 w-16 rounded-full object-cover">
+                    {% else %}
+                    <div class="h-16 w-16 rounded-full bg-gray-200 flex items-center justify-center">
+                        <svg class="h-8 w-8 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 12a5 5 0 110-10 5 5 0 010 10zm0-2a3 3 0 100-6 3 3 0 000 6zm9 11a1 1 0 01-2 0v-2a3 3 0 00-3-3H8a3 3 0 00-3 3v2a1 1 0 11-2 0v-2a5 5 0 015-5h8a5 5 0 015 5v2z"/>
                         </svg>
-                        Categories
-                    </a>
-                    <a href="{% url 'videos:playlist_list' %}" class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                        <svg class="-ml-1 mr-2 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                            <path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z" />
-                        </svg>
-                        Playlists
-                    </a>
-                    <a href="{% url 'videos:upload_video' %}" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                        <svg class="-ml-1 mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
-                        </svg>
-                        Upload New Video
-                    </a>
-                </div>
-            </div>
-        </div>
-    </header>
-
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div class="grid grid-cols-1 gap-8 lg:grid-cols-2">
-            <!-- Quick Stats -->
-            <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
-                <!-- Total Members -->
-                <div class="bg-white overflow-hidden shadow rounded-lg">
-                    <div class="p-5">
-                        <div class="flex items-center">
-                            <div class="flex-shrink-0">
-                                <svg class="h-6 w-6 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                                </svg>
-                            </div>
-                            <div class="ml-5 w-0 flex-1">
-                                <dl>
-                                    <dt class="text-sm font-medium text-gray-500 truncate">
-                                        Total Members
-                                    </dt>
-                                    <dd class="flex items-baseline">
-                                        <div class="text-2xl font-semibold text-gray-900">
-                                            {{ active_members_count }}
-                                        </div>
-                                        <div class="ml-2 flex items-baseline text-sm font-semibold text-green-600">
-                                            <span class="sr-only">Active</span>
-                                        </div>
-                                    </dd>
-                                </dl>
-                            </div>
-                        </div>
                     </div>
-                    <div class="bg-gray-50 px-5 py-3">
-                        <div class="text-sm">
-                            <a href="{% url 'accounts:studio_admin_dashboard' %}" class="font-medium text-indigo-600 hover:text-indigo-500">
-                                View all members
-                            </a>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Total Videos -->
-                <div class="bg-white overflow-hidden shadow rounded-lg">
-                    <div class="p-5">
-                        <div class="flex items-center">
-                            <div class="flex-shrink-0">
-                                <svg class="h-6 w-6 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                                </svg>
-                            </div>
-                            <div class="ml-5 w-0 flex-1">
-                                <dl>
-                                    <dt class="text-sm font-medium text-gray-500 truncate">
-                                        Total Videos
-                                    </dt>
-                                    <dd class="flex items-baseline">
-                                        <div class="text-2xl font-semibold text-gray-900">
-                                            {{ videos_count }}
-                                        </div>
-                                    </dd>
-                                </dl>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="bg-gray-50 px-5 py-3">
-                        <div class="text-sm">
-                            <a href="{% url 'videos:video_list' %}" class="font-medium text-indigo-600 hover:text-indigo-500">
-                                View all videos
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Recent Activity -->
-            <div class="bg-white shadow sm:rounded-lg">
-                <div class="px-4 py-5 sm:p-6">
-                    <h3 class="text-lg leading-6 font-medium text-gray-900">
-                        Recent Activity
-                    </h3>
-                    <div class="mt-6 flow-root">
-                        <ul role="list" class="-mb-8">
-                            {% for membership in recent_memberships %}
-                            <li>
-                                <div class="relative pb-8">
-                                    {% if not forloop.last %}
-                                    <span class="absolute top-4 left-4 -ml-px h-full w-0.5 bg-gray-200" aria-hidden="true"></span>
-                                    {% endif %}
-                                    <div class="relative flex space-x-3">
-                                        <div>
-                                            <span class="h-8 w-8 rounded-full bg-blue-500 flex items-center justify-center ring-8 ring-white">
-                                                <svg class="h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                                                    <path d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6zM16 7a1 1 0 10-2 0v1h-1a1 1 0 100 2h1v1a1 1 0 102 0v-1h1a1 1 0 100-2h-1V7z" />
-                                                </svg>
-                                            </span>
-                                        </div>
-                                        <div class="min-w-0 flex-1 pt-1.5 flex justify-between space-x-4">
-                                            <div>
-                                                <p class="text-sm text-gray-500">New member request from <span class="font-medium text-gray-900">{{ membership.member.get_full_name }}</span></p>
-                                            </div>
-                                            <div class="text-right text-sm whitespace-nowrap text-gray-500">
-                                                <time datetime="{{ membership.created_at|date:'c' }}">{{ membership.created_at|timesince }} ago</time>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </li>
-                            {% empty %}
-                            <li class="text-center py-4">
-                                <p class="text-sm text-gray-500">No recent activity</p>
-                            </li>
-                            {% endfor %}
-                        </ul>
+                    {% endif %}
+                    <div>
+                        <h2 class="text-2xl font-bold text-gray-900">{{ studio_profile.owner.get_full_name }}</h2>
+                        <p class="text-sm text-gray-500">{{ studio_profile.owner.email }}</p>
                     </div>
                 </div>
             </div>
         </div>
-    </main>
+
+        <!-- Quick Actions -->
+        <div class="bg-white shadow rounded-lg mb-8">
+            <div class="px-4 py-5 sm:p-6">
+                <h3 class="text-lg font-medium text-gray-900 mb-4">Quick Actions</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <a href="{% url 'accounts:studio_profile_setup' %}" class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+                        <svg class="-ml-1 mr-2 h-5 w-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                        </svg>
+                        Edit Profile
+                    </a>
+                    <a href="{% url 'videos:upload_video' %}" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700">
+                        <svg class="-ml-1 mr-2 h-5 w-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                        </svg>
+                        Upload Video
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Public Links -->
+        <div class="bg-white shadow rounded-lg mb-8">
+            <div class="px-4 py-5 sm:p-6">
+                <h3 class="text-lg font-medium text-gray-900 mb-4">Public Links</h3>
+                <div class="space-y-4">
+                    <!-- Public Videos Toggle -->
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h4 class="text-sm font-medium text-gray-900">Public Videos</h4>
+                            <p class="text-sm text-gray-500">Allow public access to your video library</p>
+                        </div>
+                        <form method="post" action="{% url 'accounts:toggle_public_videos' %}">
+                            {% csrf_token %}
+                            <button type="submit" class="relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 {% if studio_profile.allow_public_videos %}bg-indigo-600{% else %}bg-gray-200{% endif %}">
+                                <span class="sr-only">Toggle public videos</span>
+                                <span aria-hidden="true" class="pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 transition ease-in-out duration-200 {% if studio_profile.allow_public_videos %}translate-x-5{% else %}translate-x-0{% endif %}"></span>
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Public Signup Toggle -->
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h4 class="text-sm font-medium text-gray-900">Public Signup</h4>
+                            <p class="text-sm text-gray-500">Allow new students to sign up through your public link</p>
+                        </div>
+                        <form method="post" action="{% url 'accounts:toggle_public_signup' %}">
+                            {% csrf_token %}
+                            <button type="submit" class="relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 {% if studio_profile.allow_public_signup %}bg-indigo-600{% else %}bg-gray-200{% endif %}">
+                                <span class="sr-only">Toggle public signup</span>
+                                <span aria-hidden="true" class="pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 transition ease-in-out duration-200 {% if studio_profile.allow_public_signup %}translate-x-5{% else %}translate-x-0{% endif %}"></span>
+                            </button>
+                        </form>
+                    </div>
+
+                    {% if studio_profile.allow_public_videos %}
+                    <div class="mt-2">
+                        <label class="text-sm font-medium text-gray-900">Public Videos URL</label>
+                        <div class="mt-1 flex rounded-md shadow-sm">
+                            <input type="text" value="{{ request.scheme }}://{{ request.get_host }}{{ studio_profile.get_public_video_url }}" readonly class="flex-1 min-w-0 block w-full px-3 py-2 rounded-md border-gray-300 text-gray-900 sm:text-sm focus:ring-indigo-500 focus:border-indigo-500">
+                            <button type="button" onclick="navigator.clipboard.writeText('{{ request.scheme }}://{{ request.get_host }}{{ studio_profile.get_public_video_url }}')" class="ml-3 inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                Copy
+                            </button>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    {% if studio_profile.allow_public_signup %}
+                    <div class="mt-2">
+                        <label class="text-sm font-medium text-gray-900">Public Signup URL</label>
+                        <div class="mt-1 flex rounded-md shadow-sm">
+                            <input type="text" value="{{ request.scheme }}://{{ request.get_host }}{{ studio_profile.get_public_signup_url }}" readonly class="flex-1 min-w-0 block w-full px-3 py-2 rounded-md border-gray-300 text-gray-900 sm:text-sm focus:ring-indigo-500 focus:border-indigo-500">
+                            <button type="button" onclick="navigator.clipboard.writeText('{{ request.scheme }}://{{ request.get_host }}{{ studio_profile.get_public_signup_url }}')" class="ml-3 inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                Copy
+                            </button>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}

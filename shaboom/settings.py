@@ -80,8 +80,12 @@ WSGI_APPLICATION = 'shaboom.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': os.environ.get('SQL_ENGINE', 'django.db.backends.postgresql'),
+        'NAME': os.environ.get('SQL_DATABASE', 'shaboom'),
+        'USER': os.environ.get('SQL_USER', 'dave'),
+        'PASSWORD': os.environ.get('SQL_PASSWORD', 'punter89'),
+        'HOST': os.environ.get('SQL_HOST', 'localhost'),
+        'PORT': os.environ.get('SQL_PORT', '5432'),
     }
 }
 

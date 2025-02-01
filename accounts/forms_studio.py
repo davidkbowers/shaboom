@@ -1,28 +1,13 @@
 from django import forms
-from .models import StudioProfile, StudioLocation
+from .models import StudioProfile, StudioMembership
 from django.core.exceptions import ValidationError
 
 class StudioProfileForm(forms.ModelForm):
     class Meta:
         model = StudioProfile
-        fields = ['business_name', 'business_description', 'website', 'logo', 'established_date']
+        fields = ['website', 'logo']
         widgets = {
-            'business_name': forms.TextInput(attrs={'class': 'form-control'}),
-            'business_description': forms.Textarea(attrs={'class': 'form-control', 'rows': 4}),
             'website': forms.URLInput(attrs={'class': 'form-control'}),
-            'established_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
-        }
-
-class StudioLocationForm(forms.ModelForm):
-    class Meta:
-        model = StudioLocation
-        fields = ['name', 'address', 'phone', 'email', 'is_main_location']
-        widgets = {
-            'name': forms.TextInput(attrs={'class': 'form-control'}),
-            'address': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
-            'phone': forms.TextInput(attrs={'class': 'form-control'}),
-            'email': forms.EmailInput(attrs={'class': 'form-control'}),
-            'is_main_location': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
 
 class BusinessHoursForm(forms.Form):

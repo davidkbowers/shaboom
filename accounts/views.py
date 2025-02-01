@@ -1,67 +1,104 @@
-from django.shortcuts import render, redirect
-from django.contrib.auth import login, logout, authenticate
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth import login, logout, authenticate, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib import messages
-from .forms import CustomUserCreationForm, CustomPasswordChangeForm, CustomAuthenticationForm
-from .models import StudioProfile  # Import StudioProfile model
+from .forms import CustomUserCreationForm
+from .models import StudioProfile
 
 # Create your views here.
 
-def register_view(request):
-    if request.method == 'POST':
-        form = CustomUserCreationForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-            login(request, user)
-            return redirect('accounts:studio_profile_setup')
-    else:
-        form = CustomUserCreationForm()
-    return render(request, 'accounts/register.html', {'form': form})
-
 def login_view(request):
     if request.method == 'POST':
-        print(f"Received POST request: {request.POST}")
-        form = CustomAuthenticationForm(request, data=request.POST)
-        print(f"Form data: {request.POST}")
-        print(f"Form is valid: {form.is_valid()}")
-        if not form.is_valid():
-            print(f"Form errors: {form.errors}")
-        if form.is_valid():
-            user = form.get_user()
-            print(f"Authenticated user: {user.email}, type: {user.user_type}")
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        user = authenticate(request, email=email, password=password)
+        
+        if user is not None:
             login(request, user)
+            # Get the next URL from the session or querystring
+            next_url = request.GET.get('next') or request.session.pop('next', None)
+            if next_url:
+                return redirect(next_url)
+            
+            # Redirect based on user type
             if user.user_type == 'owner':
-                print("User is owner, checking for profile")
-                # Check if studio owner has a profile
+                # Check if studio profile exists
                 try:
-                    user.studio_profile
-                    print("Found studio profile, redirecting to dashboard")
+                    studio_profile = StudioProfile.objects.get(owner=user)
                     return redirect('accounts:studio_dashboard')
                 except StudioProfile.DoesNotExist:
-                    print("No studio profile found, redirecting to setup")
                     return redirect('accounts:studio_profile_setup')
-            print("User is not owner, redirecting to landing")
-            return redirect('marketing:landing')
-    else:
-        form = CustomAuthenticationForm(request)
+            else:
+                return redirect('accounts:member_dashboard')
+        else:
+            messages.error(request, 'Invalid email or password. Please check your credentials and try again.')
     
-    template_name = 'accounts/test_login.html' if 'test' in request.GET else 'accounts/login.html'
-    return render(request, template_name, {'form': form})
+    return render(request, 'accounts/login.html')
 
 def logout_view(request):
     logout(request)
-    messages.success(request, 'You have been logged out.')
+    messages.success(request, 'You have been logged out successfully.')
     return redirect('accounts:login')
+
+def register_view(request):
+    # Check if user has selected a plan
+    if not request.session.get('selected_plan'):
+        messages.warning(request, 'Please select a plan before registering.')
+        return redirect('accounts:plan_selection')
+
+    if request.method == 'POST':
+        form = CustomUserCreationForm(request.POST)
+        if form.is_valid():
+            # Create the user but don't save to DB yet
+            user = form.save(commit=False)
+            # Set user type to owner for studio registration
+            user.user_type = 'owner'
+            # Now save the user
+            user.save()
+            
+            # Create subscription based on selected plan
+            selected_plan = request.session.get('selected_plan')
+            # TODO: Create subscription with selected plan
+            
+            # Clear the selected plan from session
+            request.session.pop('selected_plan', None)
+            
+            # Log the user in
+            login(request, user)
+            
+            # Create an empty studio profile
+            StudioProfile.objects.create(owner=user)
+            
+            messages.success(request, 'Registration successful! Please complete your studio profile.')
+            return redirect('accounts:studio_profile_setup')
+    else:
+        form = CustomUserCreationForm()
+    
+    return render(request, 'accounts/register.html', {'form': form})
+
+def plan_selection_view(request):
+    if request.method == 'POST':
+        selected_plan = request.POST.get('plan')
+        if selected_plan:
+            request.session['selected_plan'] = selected_plan
+            messages.success(request, f'You have selected the {selected_plan} plan.')
+            return redirect('accounts:register')
+        else:
+            messages.error(request, 'Please select a valid plan.')
+    
+    return render(request, 'accounts/plan_selection.html')
 
 @login_required
 def password_change_view(request):
     if request.method == 'POST':
-        form = CustomPasswordChangeForm(user=request.user, data=request.POST)
+        form = PasswordChangeForm(request.user, request.POST)
         if form.is_valid():
-            form.save()
-            messages.success(request, 'Your password has been changed successfully!')
-            return redirect('home')
+            user = form.save()
+            update_session_auth_hash(request, user)
+            messages.success(request, 'Your password was successfully updated!')
+            return redirect('accounts:studio_dashboard')
     else:
-        form = CustomPasswordChangeForm(user=request.user)
+        form = PasswordChangeForm(request.user)
+    
     return render(request, 'accounts/password_change.html', {'form': form})

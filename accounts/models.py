@@ -2,6 +2,8 @@ from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.urls import reverse
+from django.utils.text import slugify
+import uuid
 
 # Create your models here.
 
@@ -28,6 +30,18 @@ class CustomUserManager(BaseUserManager):
         return self.create_user(email, password, **extra_fields)
 
 class CustomUser(AbstractUser):
+    """
+    Custom user model with additional fields for studio owners.
+
+    Additional fields:
+
+    - `user_type`: a choice between 'member' and 'owner', to distinguish between studio members and studio owners
+    - `studio_name`: the name of the studio, if the user is an owner
+    - `phone_number`: the phone number of the studio, if the user is an owner
+    - `address`: the address of the studio, if the user is an owner
+    - `onboarding_completed`: a boolean indicating whether the user has completed the onboarding process
+
+    """
     USER_TYPE_CHOICES = (
         ('member', 'Studio Member'),
         ('owner', 'Studio Owner'),
@@ -60,52 +74,61 @@ class CustomUser(AbstractUser):
 
 class StudioProfile(models.Model):
     owner = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='studio_profile')
-    business_name = models.CharField(max_length=255)
-    business_description = models.TextField()
     website = models.URLField(blank=True, null=True)
     logo = models.ImageField(upload_to='studio_logos/', blank=True, null=True)
-    established_date = models.DateField(blank=True, null=True)
     business_hours = models.JSONField(default=dict)
     amenities = models.JSONField(default=list)
     social_media = models.JSONField(default=dict)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    
+    # Fields for public links
+    slug = models.SlugField(max_length=255, unique=True, blank=True)
+    public_id = models.UUIDField(unique=True, null=True, blank=True)
+    allow_public_videos = models.BooleanField(default=False)
+    allow_public_signup = models.BooleanField(default=True)
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            # Generate a unique slug from the owner's name
+            base_slug = slugify(f"{self.owner.first_name}-{self.owner.last_name}")
+            unique_slug = base_slug
+            counter = 1
+            while StudioProfile.objects.filter(slug=unique_slug).exists():
+                unique_slug = f"{base_slug}-{counter}"
+                counter += 1
+            self.slug = unique_slug
+            
+        if not self.public_id:
+            self.public_id = uuid.uuid4()
+            
+        super().save(*args, **kwargs)
+
+    def get_public_video_url(self):
+        return f"/s/{self.slug}/videos/"
+
+    def get_public_signup_url(self):
+        return f"/s/{self.slug}/join/"
 
     def __str__(self):
-        return f"{self.business_name} - {self.owner.email}"
-
-class StudioLocation(models.Model):
-    studio = models.ForeignKey(StudioProfile, on_delete=models.CASCADE, related_name='locations')
-    name = models.CharField(max_length=255)
-    address = models.TextField()
-    phone = models.CharField(max_length=20)
-    email = models.EmailField(blank=True, null=True)
-    is_main_location = models.BooleanField(default=False)
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        unique_together = [['studio', 'is_main_location']]
-
-    def __str__(self):
-        return f"{self.name} - {self.studio.business_name}"
+        return f"Studio - {self.owner.email}"
 
 class StudioMembership(models.Model):
     MEMBERSHIP_STATUS = (
+        ('pending', 'Pending'),
         ('active', 'Active'),
-        ('inactive', 'Inactive'),
-        ('pending', 'Pending Approval'),
+        ('suspended', 'Suspended'),
+        ('cancelled', 'Cancelled'),
     )
 
     studio = models.ForeignKey(StudioProfile, on_delete=models.CASCADE, related_name='memberships')
     member = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='studio_memberships')
     status = models.CharField(max_length=20, choices=MEMBERSHIP_STATUS, default='pending')
-    start_date = models.DateField(auto_now_add=True)
-    end_date = models.DateField(null=True, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
+    joined_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         unique_together = [['studio', 'member']]
 
     def __str__(self):
-        return f"{self.member.email} at {self.studio.business_name}"
+        return f"{self.member.email} at {self.studio.owner.email}"
