@@ -50,3 +50,9 @@ videos/migrations/0004_video_all_thumbnails.py
 videos/templates/videos/upload.html.bak
 videos/templates/videos/backup/upload.html.bak
 .windsurfrules
+accounts/migrations/0004_plan.py
+accounts/migrations/0005_studioprofile_allow_public_signup_and_more.py
+accounts/migrations/0006_remove_studioprofile_established_date.py
+accounts/migrations/0007_remove_studioprofile_business_description_and_more.py
+accounts/migrations/0008_remove_studio_location.py
+videos/migrations/0005_alter_video_file.py
