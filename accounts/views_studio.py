@@ -113,7 +113,6 @@ def studio_social_setup(request):
 @user_passes_test(is_studio_owner)
 def studio_dashboard(request):
     studio_profile = get_object_or_404(StudioProfile, owner=request.user)
-    locations = studio_profile.locations.all()
     
     # Get active members count
     active_members_count = studio_profile.memberships.filter(status='active').count()
@@ -129,7 +128,6 @@ def studio_dashboard(request):
 
     context = {
         'studio_profile': studio_profile,
-        'locations': locations,
         'active_members_count': active_members_count,
         'videos_count': videos_count,
         'recent_memberships': recent_memberships,
