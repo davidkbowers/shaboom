@@ -6,7 +6,7 @@ from django.core.files.storage import default_storage
 from django.views.decorators.http import require_http_methods
 from .models import Video, VideoStream, Comment, Category, Playlist, PlaylistVideo
 from .forms import VideoUploadForm, CommentForm, CategoryForm, PlaylistForm, PlaylistVideoForm
-from accounts.models import StudioProfile
+from accounts.models import StudioProfile, StudioMembership
 import os
 import subprocess
 from moviepy import *
@@ -62,6 +62,57 @@ def video_list(request):
 def video_list(request):
     videos = Video.objects.filter(uploaded_by=request.user).order_by('-created_at')
     return render(request, 'videos/video_list.html', {'videos': videos})
+
+@login_required
+def student_video_list(request):
+    # Get the studio profile from the user's membership
+    studio_membership = get_object_or_404(StudioMembership, member=request.user, is_active=True)
+    studio_profile = studio_membership.studio
+    
+    # Get all public videos from the studio
+    videos = Video.objects.filter(
+        category__studio=studio_profile,
+        category__is_public=True
+    ).order_by('-created_at')
+    
+    # Group videos by category
+    categories = Category.objects.filter(
+        studio=studio_profile,
+        is_public=True
+    ).prefetch_related('videos')
+    
+    return render(request, 'videos/student_video_list.html', {
+        'categories': categories,
+        'videos': videos,
+        'studio': studio_profile
+    })
+
+@login_required
+def studio_video_list(request, studio_id):
+    studio = get_object_or_404(StudioProfile, id=studio_id)
+    
+    # Check if the user is a student of this studio
+    is_student = StudioMembership.objects.filter(
+        user=request.user,
+        studio=studio,
+        role='student'
+    ).exists()
+    
+    if not is_student:
+        return redirect('home')  # Or to a custom permission denied page
+    
+    # Get all categories and their videos for this studio
+    categories = Category.objects.filter(
+        studio=studio,
+        is_public=True
+    ).prefetch_related('videos')
+    
+    context = {
+        'studio': studio,
+        'categories': categories,
+    }
+    
+    return render(request, 'videos/studio_video_list.html', context)
 
 @login_required
 def category_list(request):

@@ -21,4 +21,6 @@ urlpatterns = [
     path('playlists/<int:playlist_id>/', views.playlist_detail, name='playlist_detail'),
     path('playlists/<int:playlist_id>/reorder/', views.playlist_video_reorder, name='playlist_video_reorder'),
     path('playlists/<int:playlist_id>/remove/<int:video_id>/', views.playlist_video_remove, name='playlist_video_remove'),
+    path('student/', views.student_video_list, name='student_video_list'),
+    path('studio/<int:studio_id>/', views.studio_video_list, name='studio_video_list'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

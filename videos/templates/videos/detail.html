@@ -8,13 +8,46 @@
         <div class="max-w-4xl mx-auto">
             <!-- Video Player -->
             <div class="aspect-w-16 aspect-h-9 mb-8 rounded-xl overflow-hidden shadow-2xl">
-                <video controls class="w-full h-full object-cover">
+                <video id="player" playsinline controls class="w-full h-full object-cover">
                     {% for stream in streams %}
-                    <source src="{% url 'video_stream' video.id stream.quality %}" type="video/mp4" label="{{ stream.quality }}" />
+                    <source src="{% url 'videos:video_stream' video.id stream.quality %}" type="video/mp4" size="{{ stream.quality }}" />
                     {% endfor %}
                     Your browser does not support the video tag.
                 </video>
             </div>
+
+            <!-- Initialize Plyr -->
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    const player = new Plyr('#player', {
+                        controls: [
+                            'play-large', // The large play button in the center
+                            'restart', // Restart playback
+                            'rewind', // Rewind by the seek time (default 10 seconds)
+                            'play', // Play/pause playback
+                            'fast-forward', // Fast forward by the seek time (default 10 seconds)
+                            'progress', // The progress bar and scrubber for playback and buffering
+                            'current-time', // The current time of playback
+                            'duration', // The full duration of the media
+                            'mute', // Toggle mute
+                            'volume', // Volume control
+                            'captions', // Toggle captions
+                            'settings', // Settings menu
+                            'pip', // Picture-in-picture (currently Safari only)
+                            'airplay', // Airplay (currently Safari only)
+                            'fullscreen', // Toggle fullscreen
+                        ],
+                        quality: {
+                            default: '720p',
+                            options: ['1080p', '720p', '480p', '360p', '240p'],
+                            forced: true,
+                            onChange: null,
+                        },
+                        seekTime: 10,
+                        keyboard: { focused: true, global: true },
+                    });
+                });
+            </script>
 
             <!-- Video Info -->
             <div class="bg-white shadow-lg rounded-xl overflow-hidden mb-8">

@@ -78,6 +78,7 @@ class Category(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField(blank=True)
     studio = models.ForeignKey('accounts.StudioProfile', on_delete=models.CASCADE, related_name='categories')
+    is_public = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
