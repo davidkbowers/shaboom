@@ -12,22 +12,28 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 import os
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Load environment variables from .env file
+env_path = os.path.join(BASE_DIR, '.env')
+load_dotenv(env_path)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-sa%hu2u*5r$1l()yfu^5^xq&ttr78#onj82&rto^i$i^xj%sme'
+SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-sa%hu2u*5r$1l()yfu^5^xq&ttr78#onj82&rto^i$i^xj%sme')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS', '').split(' ')
 
+# Process directory for video processing
+PROCESS_DIR = os.getenv('PROCESS_DIR')
 
 # Application definition
 
@@ -80,12 +86,12 @@ WSGI_APPLICATION = 'shaboom.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': os.environ.get('SQL_ENGINE', 'django.db.backends.postgresql'),
-        'NAME': os.environ.get('SQL_DATABASE', 'shaboom'),
-        'USER': os.environ.get('SQL_USER', 'dave'),
-        'PASSWORD': os.environ.get('SQL_PASSWORD', 'punter89'),
-        'HOST': os.environ.get('SQL_HOST', 'localhost'),
-        'PORT': os.environ.get('SQL_PORT', '5432'),
+        'ENGINE': os.getenv('SQL_ENGINE', 'django.db.backends.postgresql'),
+        'NAME': os.getenv('SQL_DATABASE', 'shaboom'),
+        'USER': os.getenv('SQL_USER', 'dave'),
+        'PASSWORD': os.getenv('SQL_PASSWORD', 'punter89'),
+        'HOST': os.getenv('SQL_HOST', 'localhost'),
+        'PORT': os.getenv('SQL_PORT', '5432'),
     }
 }
 

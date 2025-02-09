@@ -7,11 +7,14 @@ from django.views.decorators.http import require_http_methods
 from .models import Video, VideoStream, Comment, Category, Playlist, PlaylistVideo
 from .forms import VideoUploadForm, CommentForm, CategoryForm, PlaylistForm, PlaylistVideoForm
 from accounts.models import StudioProfile, StudioMembership
+from datetime import datetime
 import os
+import json
 import subprocess
 from moviepy import *
 import mimetypes
 import re
+import shutil
 
 range_re = re.compile(r'bytes=(\d+)-(\d+)?')
 
@@ -23,27 +26,45 @@ def upload_video(request):
         form = VideoUploadForm(request.POST, request.FILES, studio=studio_profile)
         if form.is_valid():
             try:
+                #rename video file
+                timestamp_str = datetime.now().isoformat()
+                original_name, extension = os.path.splitext(request.FILES['file'].name)
+                new_video_file = f"{timestamp_str}{extension}"
+
+                #create json processing data
+                processing_data = {
+                    "uploaded_by": request.user.id,
+                    "title": form.cleaned_data['title'],
+                    "description": form.cleaned_data['description'],
+                    "file": new_video_file,
+                    "category_id": form.cleaned_data['category'].id if form.cleaned_data['category'] else None,
+                }
+
+                # Save processing data to json file
+                json_filename = f"{timestamp_str}.json"
+                json_filepath = os.path.join(settings.PROCESS_DIR, json_filename)
+                with open(json_filepath, 'w') as f:
+                    json.dump(processing_data, f)
+
+                #copy video file to processing directory
+                uploaded_file = request.FILES['file']
+                process_filepath = os.path.join(settings.PROCESS_DIR, new_video_file)
+                
+                # Ensure the processing directory exists
+                os.makedirs(settings.PROCESS_DIR, exist_ok=True)
+                
+                # Save the uploaded file to processing directory
+                with open(process_filepath, 'wb+') as destination:
+                    for chunk in uploaded_file.chunks():
+                        destination.write(chunk)
+
+                # Create and save the video object
                 video = form.save(commit=False)
                 video.uploaded_by = request.user
-                video.save()
-                
-                # Skip video processing in test mode
-                if 'test' not in request.GET:
-                    try:
-                        # Get video duration and size
-                        with VideoFileClip(video.file.path) as clip:
-                            video.duration = clip.duration
-                            video.size = os.path.getsize(video.file.path)
-                            video.save()
-                        
-                        # Trigger async video processing (compression and streaming)
-                        process_video.delay(video.id)
-                    except Exception as e:
-                        # If video processing fails, log the error but don't delete the video
-                        print(f"Error processing video: {str(e)}")
-                        video.processing_status = 'failed'
-                        video.save()
-                
+                video.processing_status = 'pending'
+                video.save()  # Save the video to get an ID
+
+                # Now we can redirect with a valid video ID
                 return redirect('videos:video_detail', video_id=video.id)
             except Exception as e:
                 form.add_error(None, f"Error uploading video: {str(e)}")
