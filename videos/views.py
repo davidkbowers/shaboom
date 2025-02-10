@@ -4,6 +4,7 @@ from django.http import JsonResponse, HttpResponseBadRequest, StreamingHttpRespo
 from django.conf import settings
 from django.core.files.storage import default_storage
 from django.views.decorators.http import require_http_methods
+from django.contrib import messages
 from .models import Video, VideoStream, Comment, Category, Playlist, PlaylistVideo
 from .forms import VideoUploadForm, CommentForm, CategoryForm, PlaylistForm, PlaylistVideoForm
 from accounts.models import StudioProfile, StudioMembership
@@ -65,12 +66,14 @@ def upload_video(request):
                 video.save()  # Save the video to get an ID
 
                 # Now we can redirect with a valid video ID
-                return redirect('videos:video_detail', video_id=video.id)
+                #return redirect('videos:video_detail', video_id=video.id)
+                messages.success(request, 'Video uploaded successfully! Please wait for processing.')
+                form = VideoUploadForm(studio=studio_profile)
+                return render(request, 'videos/upload.html', {'form': form})    
             except Exception as e:
                 form.add_error(None, f"Error uploading video: {str(e)}")
     else:
         form = VideoUploadForm(studio=studio_profile)
-    
     return render(request, 'videos/upload.html', {'form': form})
 
 @login_required

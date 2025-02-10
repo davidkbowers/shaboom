@@ -59,3 +59,4 @@ videos/migrations/0005_alter_video_file.py
 celerybeat-schedule
 accounts/migrations/0009_delete_plan.py
 videos/migrations/0006_category_is_public.py
+.env
