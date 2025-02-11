@@ -5,6 +5,16 @@
 {% block content %}
 <div class="min-h-full bg-gray-50 py-8">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+<!--         {% if show_success %}
+            <div class="mb-4 p-4 bg-green-100 text-green-700 rounded-lg">
+                Video uploaded successfully! Please wait for processing.
+            </div>
+        {% endif %} -->
+        {% if show_error %}
+            <div class="mb-4 p-4 bg-red-100 text-red-700 rounded-lg">
+                {{ form.non_field_errors }}
+            </div>
+        {% endif %}
         <div class="mb-8">
             <div class="sm:flex sm:items-center sm:justify-between">
                 <div>
@@ -75,13 +85,17 @@
                             <a href="{% url 'videos:category_list' %}" class="text-sm font-medium text-indigo-600 hover:text-indigo-500">Manage Categories</a>
                         </div>
                         <div class="mt-1">
-                            {{ form.category }}
+                            <select id="id_category" name="category"
+                                class="block w-full px-4 py-2.5 sm:text-sm border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition duration-150 ease-in-out">
+                                <option value="">No category selected</option>
+                                {% for category in form.category.field.queryset %}
+                                    <option value="{{ category.id }}" {% if form.category.value == category.id %}selected{% endif %}>
+                                        {{ category.name }}
+                                    </option>
+                                {% endfor %}
+                            </select>
                         </div>
-                        {% if form.category.errors %}
-                            <p class="mt-1 text-sm text-red-600">{{ form.category.errors.0 }}</p>
-                        {% else %}
-                            <p class="mt-1 text-sm text-gray-500">Choose a category to help organize your videos</p>
-                        {% endif %}
+                        <p class="mt-1 text-sm text-gray-500">Choose a category to help organize your videos.</p>
                     </div>
 
                     <!-- File Upload -->

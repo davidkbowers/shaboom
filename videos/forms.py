@@ -4,7 +4,8 @@ from .models import Video, Comment, Category, Playlist, PlaylistVideo
 class VideoUploadForm(forms.ModelForm):
     category = forms.ModelChoiceField(
         queryset=Category.objects.none(),
-        empty_label="Select a category",
+        empty_label="No category selected",
+        required=False,
         widget=forms.Select(attrs={
             'class': 'block w-full sm:text-sm border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition duration-150 ease-in-out'
         })

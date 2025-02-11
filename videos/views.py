@@ -65,13 +65,15 @@ def upload_video(request):
                 video.processing_status = 'pending'
                 video.save()  # Save the video to get an ID
 
-                # Now we can redirect with a valid video ID
-                #return redirect('videos:video_detail', video_id=video.id)
+                # Now we can render with a valid video ID
                 messages.success(request, 'Video uploaded successfully! Please wait for processing.')
                 form = VideoUploadForm(studio=studio_profile)
-                return render(request, 'videos/upload.html', {'form': form})    
+                return render(request, 'videos/upload.html', {'form': form, 'show_success': True})
             except Exception as e:
-                form.add_error(None, f"Error uploading video: {str(e)}")
+                messages.error(request, f"Error uploading video: {str(e)}")
+                return render(request, 'videos/upload.html', {'form': form, 'show_error': True})
+        else:
+            form.add_error(None, f"Error uploading video: {str(form.errors)}")
     else:
         form = VideoUploadForm(studio=studio_profile)
     return render(request, 'videos/upload.html', {'form': form})
