@@ -42,9 +42,6 @@ class Video(models.Model):
 
 class VideoStream(models.Model):
     QUALITY_CHOICES = (
-        ('240p', '240p'),
-        ('360p', '360p'),
-        ('480p', '480p'),
         ('720p', '720p'),
         ('1080p', '1080p'),
     )

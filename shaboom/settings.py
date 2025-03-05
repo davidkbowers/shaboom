@@ -13,13 +13,23 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 from pathlib import Path
 import os
 from dotenv import load_dotenv
+import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Load environment variables from .env file
 env_path = os.path.join(BASE_DIR, '.env')
-load_dotenv(env_path)
+print("Loading .env from:", env_path)
+load_dotenv(env_path, override=True)  # Add override=True to ensure these values take precedence
+
+# Debug environment variables
+print("Shell environment PROCESS_DIR:", os.environ.get('PROCESS_DIR'))
+print("Raw env value from getenv:", os.getenv('PROCESS_DIR'))
+with open(env_path) as f:
+    print("Direct .env file contents:", f.read())
+
+print("All environment variables:", {k:v for k,v in os.environ.items() if 'PROCESS' in k})
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
@@ -33,8 +43,8 @@ DEBUG = os.getenv('DEBUG', 'True') == 'True'
 ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS', '').split(' ')
 
 # Process directory for video processing
-PROCESS_DIR = os.getenv('PROCESS_DIR')
-
+PROCESS_DIR = os.path.abspath(os.getenv('PROCESS_DIR', '/home/dave/projects-python/videoproc/to_process'))
+print("PROCESS_DIR after abspath: ", PROCESS_DIR)
 # Application definition
 
 INSTALLED_APPS = [
@@ -85,14 +95,10 @@ WSGI_APPLICATION = 'shaboom.wsgi.application'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': os.getenv('SQL_ENGINE', 'django.db.backends.postgresql'),
-        'NAME': os.getenv('SQL_DATABASE', 'shaboom'),
-        'USER': os.getenv('SQL_USER', 'dave'),
-        'PASSWORD': os.getenv('SQL_PASSWORD', 'punter89'),
-        'HOST': os.getenv('SQL_HOST', 'localhost'),
-        'PORT': os.getenv('SQL_PORT', '5432'),
-    }
+    'default': dj_database_url.config(
+        default=os.getenv('DATABASE_URL'),
+        conn_max_age=600
+    )
 }
 
 

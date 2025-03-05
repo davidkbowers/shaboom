@@ -44,13 +44,17 @@ def upload_video(request):
                 # Save processing data to json file
                 json_filename = f"{timestamp_str}.json"
                 json_filepath = os.path.join(settings.PROCESS_DIR, json_filename)
+                print("settings.PROCESS_DIR: ", settings.PROCESS_DIR)
+                print("json_filepath: ", json_filepath)
+
                 with open(json_filepath, 'w') as f:
                     json.dump(processing_data, f)
 
                 #copy video file to processing directory
                 uploaded_file = request.FILES['file']
                 process_filepath = os.path.join(settings.PROCESS_DIR, new_video_file)
-                
+                print(process_filepath)
+
                 # Ensure the processing directory exists
                 os.makedirs(settings.PROCESS_DIR, exist_ok=True)
                 
@@ -78,11 +82,11 @@ def upload_video(request):
         form = VideoUploadForm(studio=studio_profile)
     return render(request, 'videos/upload.html', {'form': form})
 
-@login_required
-def video_list(request):
-    videos = Video.objects.filter(processing_status='completed').order_by('-created_at')
-    template_name = 'videos/test_list.html' if 'test' in request.GET else 'videos/list.html'
-    return render(request, template_name, {'videos': videos})
+#@login_required
+#def video_list(request):
+#    videos = Video.objects.filter(processing_status='completed').order_by('-created_at')
+#    template_name = 'videos/test_list.html' if 'test' in request.GET else 'videos/list.html'
+#    return render(request, template_name, {'videos': videos})
 
 @login_required
 def video_list(request):
@@ -245,11 +249,27 @@ def playlist_video_remove(request, playlist_id, video_id):
 
 def video_detail(request, video_id):
     video = get_object_or_404(Video, id=video_id)
+    
+    # Get all available streams for the video
     streams = video.streams.all()
+    
+    # Get the 720p stream if available, otherwise use the original file
+    source = None
+    if streams.exists():
+        # Prefer 720p if available, otherwise take the first available stream
+        stream = streams.filter(quality='720p').first() or streams.first()
+        if stream:
+            source = stream.file.url
+    
+    if not source and video.file:
+        source = video.file.url
+    
     comments = video.comments.select_related('user').all()
     comment_form = CommentForm()
+    
     return render(request, 'videos/detail.html', {
         'video': video,
+        'source': source,
         'streams': streams,
         'comments': comments,
         'comment_form': comment_form

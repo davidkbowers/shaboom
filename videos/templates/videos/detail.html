@@ -10,7 +10,7 @@
             <div class="aspect-w-16 aspect-h-9 mb-8 rounded-xl overflow-hidden shadow-2xl">
                 <video id="player" playsinline controls class="w-full h-full object-cover">
                     {% for stream in streams %}
-                    <source src="{% url 'videos:video_stream' video.id stream.quality %}" type="video/mp4" size="{{ stream.quality }}" />
+                    <source src="{% source %}" type="video/mp4" size="{{ stream.quality }}" />
                     {% endfor %}
                     Your browser does not support the video tag.
                 </video>
