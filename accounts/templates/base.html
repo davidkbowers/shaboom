@@ -6,23 +6,110 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Shaboom{% endblock %}</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
     <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
     <style>
-        /* Global input styles */
-        input[type="text"],
-        input[type="email"],
-        input[type="password"],
-        input[type="number"],
-        input[type="tel"],
-        input[type="url"],
-        input[type="date"],
-        input[type="time"],
-        textarea,
-        select {
-            @apply border border-gray-300 bg-white rounded-md shadow-sm px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 hover:border-gray-400 transition-colors;
+        /* Global form styles */
+        .form-input-container {
+            position: relative;
+            border-radius: 0.375rem;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            border: 1px solid #d1d5db;
+        }
+
+        .form-input-container:focus-within {
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 1px #4f46e5;
+            outline: 2px solid transparent;
+            outline-offset: 2px;
+        }
+
+        .form-input {
+            display: block;
+            width: 100%;
+            border: none;
+            background: transparent;
+            padding: 0.5rem 0.75rem;
+            font-size: 0.875rem;
+            line-height: 1.25rem;
+            color: #111827;
+        }
+
+        .form-input::placeholder {
+            color: #9ca3af;
+        }
+
+        .form-input:focus {
+            outline: none;
+            box-shadow: none;
+        }
+
+        /* Input with prefix (like https://) */
+        .input-prefix {
+            display: flex;
+            align-items: center;
+            padding-left: 0.75rem;
+            padding-right: 0.75rem;
+            font-size: 0.875rem;
+            color: #6b7280;
+            background-color: transparent;
+        }
+
+        /* Style textareas */
+        textarea.form-input {
+            min-height: 6rem;
+            resize: vertical;
+            padding: 0.625rem 0.75rem;
+        }
+
+        /* Style file inputs */
+        input[type="file"] {
+            display: none;
+        }
+
+        .file-input-button {
+            position: relative;
+            cursor: pointer;
+            border-radius: 0.375rem;
+            background-color: white;
+            padding: 0.5rem 0.75rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #4f46e5;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            border: 1px solid #d1d5db;
+            transition: all 150ms ease-in-out;
+        }
+
+        .file-input-button:hover {
+            background-color: #f9fafb;
+            color: #4338ca;
+        }
+
+        .file-input-button:focus-within {
+            outline: 2px solid #4f46e5;
+            outline-offset: 2px;
+        }
+
+        /* Error states */
+        .form-error {
+            margin-top: 0.5rem;
+            font-size: 0.875rem;
+            color: #dc2626;
+        }
+
+        .input-error {
+            border-color: #f87171;
+        }
+
+        .input-error .form-input {
+            color: #dc2626;
+        }
+
+        .input-error .form-input::placeholder {
+            color: #fca5a5;
         }
     </style>
     {% block extra_css %}{% endblock %}

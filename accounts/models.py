@@ -75,10 +75,15 @@ class CustomUser(AbstractUser):
 class StudioProfile(models.Model):
     owner = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='studio_profile')
     website = models.URLField(blank=True, null=True)
+    description = models.TextField(blank=True, null=True, help_text="A brief description of your studio")
     logo = models.ImageField(upload_to='studio_logos/', blank=True, null=True)
     business_hours = models.JSONField(default=dict)
     amenities = models.JSONField(default=list)
-    social_media = models.JSONField(default=dict)
+    
+    # Social media fields
+    instagram = models.CharField(max_length=255, blank=True, null=True, help_text="Instagram username without @")
+    facebook = models.CharField(max_length=255, blank=True, null=True, help_text="Facebook page name")
+    
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     

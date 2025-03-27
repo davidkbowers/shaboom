@@ -31,6 +31,8 @@ local_settings.py
 db.sqlite3
 db.sqlite3-journal
 media/
+*/migrations/*
+!*/migrations/__init__.py
 
 # IDE
 .idea/
@@ -41,23 +43,18 @@ media/
 # OS
 .DS_Store
 Thumbs.db
+
+# Environment files
+.env
 .env.dev
 .env.prod
 .env.prod.db
-accounts/migrations/0003_alter_gymmembership_unique_together_and_more.py
-videos/migrations/0002_comment.py
-videos/migrations/0003_category_video_category_playlist_playlistvideo_and_more.py
-videos/migrations/0004_video_all_thumbnails.py
-videos/templates/videos/upload.html.bak
-videos/templates/videos/backup/upload.html.bak
-.windsurfrules
-accounts/migrations/0004_plan.py
-accounts/migrations/0005_studioprofile_allow_public_signup_and_more.py
-accounts/migrations/0006_remove_studioprofile_established_date.py
-accounts/migrations/0007_remove_studioprofile_business_description_and_more.py
-accounts/migrations/0008_remove_studio_location.py
-videos/migrations/0005_alter_video_file.py
+
+# Celery
 celerybeat-schedule
-accounts/migrations/0009_delete_plan.py
-videos/migrations/0006_category_is_public.py
-.env
+
+# Windsurf
+.windsurfrules
+
+# Backup files
+*.bak

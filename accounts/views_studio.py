@@ -15,16 +15,26 @@ def studio_profile_setup(request):
         # Try to get existing profile
         studio_profile = StudioProfile.objects.get(owner=request.user)
     except StudioProfile.DoesNotExist:
-        studio_profile = None
+        # Create a new profile if one doesn't exist
+        studio_profile = StudioProfile.objects.create(owner=request.user)
 
     if request.method == 'POST':
         form = StudioProfileForm(request.POST, request.FILES, instance=studio_profile)
         if form.is_valid():
-            profile = form.save(commit=False)
-            profile.owner = request.user
-            profile.save()
-            messages.success(request, 'Studio profile updated successfully!')
-            return redirect('accounts:studio_dashboard')
+            try:
+                with transaction.atomic():
+                    profile = form.save(commit=False)
+                    profile.owner = request.user
+                    
+                    # Handle logo upload
+                    if 'logo' in request.FILES:
+                        profile.logo = request.FILES['logo']
+                    
+                    profile.save()
+                    messages.success(request, 'Studio profile updated successfully!')
+                    return redirect('accounts:studio_dashboard')
+            except Exception as e:
+                messages.error(request, f'Error saving profile: {str(e)}')
     else:
         form = StudioProfileForm(instance=studio_profile)
 
