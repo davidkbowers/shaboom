@@ -12,40 +12,25 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 import os
-from dotenv import load_dotenv
 import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Load environment variables from .env file
-env_path = os.path.join(BASE_DIR, '.env')
-print("Loading .env from:", env_path)
-load_dotenv(env_path, override=True)  # Add override=True to ensure these values take precedence
-
-# Debug environment variables
-print("Shell environment PROCESS_DIR:", os.environ.get('PROCESS_DIR'))
-print("Raw env value from getenv:", os.getenv('PROCESS_DIR'))
-with open(env_path) as f:
-    print("Direct .env file contents:", f.read())
-
-print("All environment variables:", {k:v for k,v in os.environ.items() if 'PROCESS' in k})
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-sa%hu2u*5r$1l()yfu^5^xq&ttr78#onj82&rto^i$i^xj%sme')
+SECRET_KEY = os.environ.get('SECRET_KEY', default='django-insecure-99_+4yj_7)po_3ua9lk0*20%i3z51gq34+3r34mf8nc69h+nc+')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DEBUG', 'True') == 'True'
+DEBUG = 'RENDER' not in os.environ
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0']
+ALLOWED_HOSTS = []
+RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
+if RENDER_EXTERNAL_HOSTNAME:
+    ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
+
 
 # Process directory for video processing
-PROCESS_DIR = os.path.abspath(os.getenv('PROCESS_DIR', '/home/dave/projects-python/videoproc/to_process'))
-print("PROCESS_DIR after abspath: ", PROCESS_DIR)
-# Application definition
+PROCESS_DIR = os.environ.get('PROCESS_DIR', default='/home/dave/projects-python/videoproc/to_process')
+
 
 INSTALLED_APPS = [
     'django.contrib.admin',
