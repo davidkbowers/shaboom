@@ -82,7 +82,7 @@ WSGI_APPLICATION = 'shaboom.wsgi.application'
 
 DATABASES = {
     'default': dj_database_url.config(
-        default='postgresql://postgres:postgres@localhost:5432/shaboom',
+        default=os.environ.get('DATABASE_URL'),
         conn_max_age=600
     )
 }
