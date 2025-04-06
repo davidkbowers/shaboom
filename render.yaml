@@ -15,7 +15,7 @@ services:
       - key: DATABASE_URL
         fromDatabase:
           name: shaboomdb
-          property: connectionString
+          property: postgresql://shaboom:mfBi5ekABi3CPVEzRlZqlFBnnflRoCOl@dpg-cvpggnpr0fns73829io0-a/shaboom
       - key: SECRET_KEY
         generateValue: true
       - key: WEB_CONCURRENCY
