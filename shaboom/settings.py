@@ -30,11 +30,7 @@ SECRET_KEY = env("SECRET_KEY", default="change_me")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env("DEBUG", default=False)
 
-ALLOWED_HOSTS = [
-    'localhost',
-    '127.0.0.1',
-    '0.0.0.0',
-]
+ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["*"])
 
 # Process directory for video processing
 PROCESS_DIR = os.environ.get('PROCESS_DIR', default='/home/dave/projects-python/videoproc/to_process')
@@ -121,6 +117,13 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
 ]
 
+LOGGING = {  
+    "version": 1,  
+    "disable_existing_loggers": False,  
+    "handlers": {"console": {"class": "logging.StreamHandler"}},  
+    "loggers": {"": {"handlers": ["console"], "level": "DEBUG"}},  
+}
+
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
@@ -136,20 +139,18 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
+STATIC_URL = env.str("STATIC_URL", default="/static/")  
+STATIC_ROOT = env.str("STATIC_ROOT", default=BASE_DIR / "staticfiles")
+
 WHITENOISE_USE_FINDERS = True
 WHITENOISE_AUTOREFRESH = DEBUG
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.1/howto/static-files/
-
-STATIC_URL = env.str("STATIC_URL", default="/static/")
-STATIC_ROOT = env.str("STATIC_ROOT", default=BASE_DIR / "staticfiles")
 
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 # Media files (Uploads)
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_ROOT = env("MEDIA_ROOT", default=BASE_DIR / "media")  
+MEDIA_URL = env("MEDIA_PATH", default="/media/")
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
