@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Shaboom{% endblock %}</title>
+    <title>{% block title %}CoreConnect{% endblock %}</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
     <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
@@ -122,7 +122,7 @@
                 <!-- Logo and Desktop Navigation -->
                 <div class="flex">
                     <div class="flex-shrink-0 flex items-center">
-                        <a href="{% url 'marketing:landing' %}" class="text-2xl font-bold text-indigo-600">Shaboom</a>
+                        <a href="{% url 'marketing:landing' %}" class="text-2xl font-bold text-indigo-600">CoreConnect</a>
                     </div>
                     {% if user.is_authenticated %}
                     <div class="hidden md:ml-6 md:flex md:space-x-8 md:items-end">
@@ -226,7 +226,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div>
-                    <h3 class="text-sm font-semibold text-gray-400 tracking-wider uppercase">About Shaboom</h3>
+                    <h3 class="text-sm font-semibold text-gray-400 tracking-wider uppercase">About CoreConnect</h3>
                     <p class="mt-4 text-base text-gray-500">
                         {% block footer_about %}A powerful platform for your digital needs{% endblock %}
                     </p>
@@ -271,7 +271,7 @@
                     <div class="mt-4 space-y-4">
                         {% block footer_contact %}
                         <p class="text-base text-gray-500">
-                            <span class="block">Email: contact@shaboom.com</span>
+                            <span class="block">Email: contact@CoreConnect.com</span>
                             <span class="block mt-1">Phone: (555) 123-4567</span>
                         </p>
                         {% endblock %}
@@ -280,7 +280,7 @@
             </div>
             <div class="mt-8 border-t border-gray-200 pt-8">
                 <p class="text-base text-gray-400 text-center">
-                    &copy; {% now "Y" %} Shaboom. All rights reserved.
+                    &copy; {% now "Y" %} CoreConnect. All rights reserved.
                 </p>
             </div>
         </div>

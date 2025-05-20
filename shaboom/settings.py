@@ -83,7 +83,7 @@ WSGI_APPLICATION = 'shaboom.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
-
+DATABASE_URL = 'postgres://dave:punter89@localhost:5432/shaboom'
 DATABASES = {
     'default': dj_database_url.config(
         default=os.getenv('DATABASE_URL'),

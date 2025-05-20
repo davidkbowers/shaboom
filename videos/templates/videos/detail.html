@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}{{ video.title }} - Shaboom{% endblock %}
+{% block title %}{{ video.title }} - CoreConnect{% endblock %}
 
 {% block content %}
 <div class="min-h-full bg-gray-50 py-8">
@@ -10,7 +10,9 @@
             <div class="aspect-w-16 aspect-h-9 mb-8 rounded-xl overflow-hidden shadow-2xl">
                 <video id="player" playsinline controls class="w-full h-full object-cover">
                     {% for stream in streams %}
-                    <source src="{% source %}" type="video/mp4" size="{{ stream.quality }}" />
+                    <source src="{{ stream.file.url }}" type="video/mp4" size="{{ stream.quality }}" />
+                    {% empty %}
+                    <source src="{{ source }}" type="video/mp4" />
                     {% endfor %}
                     Your browser does not support the video tag.
                 </video>
