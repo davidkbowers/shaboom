@@ -27,8 +27,29 @@ environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = env("SECRET_KEY", default="change_me")
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = env("DEBUG", default=False)
+# Test settings
+DEBUG = False
+TESTING = True
+
+# Use our custom test runner
+TEST_RUNNER = 'test_runner.TenantAwareTestRunner'
+
+# Ensure we're using the test database
+DATABASES = {
+    'default': {
+        'ENGINE': 'django_tenants.postgresql_backend',
+        'NAME': 'test_shaboom',
+        'USER': 'dave',
+        'PASSWORD': 'punter89',
+        'HOST': 'localhost',
+        'PORT': '5432',
+    }
+}
+
+# Use a faster password hasher for tests
+PASSWORD_HASHERS = [
+    'django.contrib.auth.hashers.MD5PasswordHasher',
+]
 
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["*"])
 
@@ -62,6 +83,14 @@ TENANT_APPS = [
     # Your tenant-specific apps
     'accounts',
     'videos',
+]
+
+# Enable migrations for testing
+MIGRATION_MODULES = {}
+
+# Use MD5 password hasher for faster tests
+PASSWORD_HASHERS = [
+    'django.contrib.auth.hashers.MD5PasswordHasher',
 ]
 
 INSTALLED_APPS = list(SHARED_APPS) + [app for app in TENANT_APPS if app not in SHARED_APPS]
@@ -108,11 +137,14 @@ DATABASE_URL = 'postgres://dave:punter89@localhost:5432/shaboom'
 DATABASES = {
     'default': {
         'ENGINE': 'django_tenants.postgresql_backend',
-        'NAME': 'shaboom',
+        'NAME': 'test_shaboom',  # Use the test database
         'USER': 'dave',
         'PASSWORD': 'punter89',
         'HOST': 'localhost',
         'PORT': '5432',
+        'TEST': {
+            'NAME': 'test_shaboom',
+        },
     }
 }
 
