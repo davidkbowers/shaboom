@@ -1,6 +1,6 @@
-from django.apps import AppConfig
+from shaboom.ready import ReadyAppConfig
 
 
-class VideosConfig(AppConfig):
+class VideosConfig(ReadyAppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
     name = 'videos'

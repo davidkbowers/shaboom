@@ -50,6 +50,16 @@
                 </div>
 
                 <div>
+                    <label for="id_studio_name" class="block text-sm font-medium text-gray-700">Studio Name</label>
+                    <div class="mt-1">
+                        {% render_field form.studio_name class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500" %}
+                    </div>
+                    {% if form.studio_name.errors %}
+                    <p class="mt-2 text-sm text-red-600">{{ form.studio_name.errors.0 }}</p>
+                    {% endif %}
+                </div>
+
+                <div>
                     <label for="id_password1" class="block text-sm font-medium text-gray-700">Password</label>
                     <div class="mt-1">
                         {% render_field form.password1 class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500" %}

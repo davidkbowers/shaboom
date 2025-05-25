@@ -32,7 +32,7 @@ def studio_profile_setup(request):
                     
                     profile.save()
                     messages.success(request, 'Studio profile updated successfully!')
-                    return redirect('accounts:studio_dashboard')
+                    return redirect('studio:studio_dashboard')
             except Exception as e:
                 messages.error(request, f'Error saving profile: {str(e)}')
     else:
@@ -103,7 +103,7 @@ def toggle_public_videos(request):
         studio_profile.allow_public_videos = not studio_profile.allow_public_videos
         studio_profile.save()
         messages.success(request, 'Public video access has been updated.')
-    return redirect('accounts:studio_dashboard')
+    return redirect('studio:studio_dashboard')
 
 @login_required
 def toggle_public_signup(request):
@@ -112,4 +112,4 @@ def toggle_public_signup(request):
         studio_profile.allow_public_signup = not studio_profile.allow_public_signup
         studio_profile.save()
         messages.success(request, 'Public signup access has been updated.')
-    return redirect('accounts:studio_dashboard')
+    return redirect('studio:studio_dashboard')

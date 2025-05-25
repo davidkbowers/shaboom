@@ -1,19 +1,12 @@
-from django.apps import AppConfig
+from shaboom.ready import ReadyAppConfig
 
-class TenantsConfig(AppConfig):
+class TenantsConfig(ReadyAppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
     name = 'tenants'
     
     def ready(self):
-        # Use a more reliable way to import signals
-        # that won't cause database access during import
-        import django
-        if not getattr(django, 'setup_complete', False):
-            return
-            
-        # Only import signals after Django is fully loaded
-        from . import signals
-        from django.apps import apps
+        # Call parent ready method to ensure proper initialization
+        super().ready()
         
-        # Connect signals after Django is fully loaded
-        signals.connect_signals()
+        # Defer connecting signals until Django is fully initialized
+        self.defer_database_operation('tenants.signals', 'connect_signals')

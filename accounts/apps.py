@@ -1,6 +1,6 @@
-from django.apps import AppConfig
+from shaboom.ready import ReadyAppConfig
 
 
-class AccountsConfig(AppConfig):
+class AccountsConfig(ReadyAppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
     name = 'accounts'

@@ -51,6 +51,7 @@ SHARED_APPS = [
     'widget_tweaks',
     'accounts',
     'studio',  # Studio management app (shared across all tenants)
+    'shaboom',  # Main project app for shared utilities and management commands
 ]
 
 TENANT_APPS = [
@@ -105,7 +106,6 @@ WSGI_APPLICATION = 'shaboom.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
-DATABASE_URL = 'postgres://dave:punter89@localhost:5432/shaboom_tenants'
 DATABASES = {
     'default': {
         'ENGINE': 'django_tenants.postgresql_backend',

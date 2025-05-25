@@ -26,7 +26,7 @@ def login_view(request):
                 # Check if studio profile exists
                 try:
                     studio_profile = StudioProfile.objects.get(owner=user)
-                    return redirect('accounts:studio_dashboard')
+                    return redirect('studio:studio_dashboard')
                 except StudioProfile.DoesNotExist:
                     return redirect('accounts:studio_profile_setup')
             else:
@@ -97,7 +97,7 @@ def password_change_view(request):
             user = form.save()
             update_session_auth_hash(request, user)
             messages.success(request, 'Your password was successfully updated!')
-            return redirect('accounts:studio_dashboard')
+            return redirect('studio:studio_dashboard')
     else:
         form = PasswordChangeForm(request.user)
     

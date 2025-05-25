@@ -80,14 +80,14 @@ def public_studio_signup(request, studio_slug):
 
 def user_login(request):
     if request.user.is_authenticated:
-        return redirect('home')
+        return redirect('tenant_home')
         
     if request.method == 'POST':
         form = AuthenticationForm(request, data=request.POST)
         if form.is_valid():
             user = form.get_user()
             auth_login(request, user)
-            next_url = request.POST.get('next', request.GET.get('next', 'home'))
+            next_url = request.POST.get('next', request.GET.get('next', 'tenant_home'))
             return redirect(next_url)
     else:
         form = AuthenticationForm()
@@ -102,6 +102,6 @@ def user_login(request):
 
 def user_logout(request):
     auth_logout(request)
-    return redirect('home')
+    return redirect('public:landing')
 
 # Password reset is now handled by Django's built-in views in public_urls.py

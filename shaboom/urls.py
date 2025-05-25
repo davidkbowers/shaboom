@@ -10,6 +10,7 @@ from django.views.generic import RedirectView
 from django.conf import settings
 from django.conf.urls.static import static
 from django_tenants.utils import remove_www_and_dev, get_public_schema_name
+from .admin import tenant_admin_site
 
 from . import views
 from accounts.views_landing import LandingPageView
@@ -24,7 +25,7 @@ public_patterns = [
 
 # Tenant-specific URLs
 tenant_patterns = [
-    path('admin/', admin.site.urls),
+    path('admin/', tenant_admin_site.urls),
     path('accounts/', include(('accounts.urls', 'accounts'), namespace='accounts')),  # Tenant account views
     path('studio/', include(('studio.urls', 'studio'), namespace='studio')),  # Studio management
     path('videos/', include(('videos.urls', 'videos'), namespace='videos')),
