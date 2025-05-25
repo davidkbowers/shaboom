@@ -46,6 +46,3 @@ def connect_signals():
     except LookupError:
         # Model not loaded yet, will be connected later
         pass
-
-# Connect signals when the module is imported by the ready() method
-connect_signals()

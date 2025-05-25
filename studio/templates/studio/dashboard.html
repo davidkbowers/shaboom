@@ -1,0 +1,60 @@
+{% extends "studio/base.html" %}
+
+{% block page_title %}Studio Dashboard - {{ studio.owner.get_full_name|default:studio.owner.email }}{% endblock %}
+
+{% block studio_content %}
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <!-- Overview Stats -->
+    <div class="bg-blue-50 p-6 rounded-lg">
+        <h2 class="text-lg font-semibold text-gray-800 mb-4">Studio Overview</h2>
+        <div class="space-y-4">
+            <div>
+                <p class="text-sm text-gray-600">Studio Name</p>
+                <p class="font-medium">{{ studio.owner.get_full_name|default:studio.owner.email }}</p>
+            </div>
+            {% if studio.website %}
+            <div>
+                <p class="text-sm text-gray-600">Website</p>
+                <a href="{{ studio.website }}" class="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">
+                    {{ studio.website }}
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="bg-white p-6 rounded-lg border border-gray-200">
+        <h2 class="text-lg font-semibold text-gray-800 mb-4">Quick Actions</h2>
+        <div class="space-y-2">
+            <a href="#" class="block px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors">
+                Add New Video
+            </a>
+            <a href="#" class="block px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded hover:bg-gray-50 transition-colors">
+                View Members
+            </a>
+            <a href="#" class="block px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded hover:bg-gray-50 transition-colors">
+                Studio Settings
+            </a>
+        </div>
+    </div>
+
+    <!-- Recent Activity -->
+    <div class="bg-white p-6 rounded-lg border border-gray-200">
+        <h2 class="text-lg font-semibold text-gray-800 mb-4">Recent Activity</h2>
+        <div class="space-y-4">
+            <div class="text-sm text-gray-600">
+                <p>No recent activity</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Additional sections can be added here -->
+<div class="mt-8">
+    <h2 class="text-xl font-semibold text-gray-800 mb-4">Studio Content</h2>
+    <div class="bg-white p-6 rounded-lg border border-gray-200">
+        <p class="text-gray-600">Your studio content will be displayed here.</p>
+    </div>
+</div>
+{% endblock %}

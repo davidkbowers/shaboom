@@ -6,10 +6,37 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods
-from .models import StudioProfile, StudioMembership
+from studio.models import StudioProfile, StudioMembership
 from .forms import CustomUserCreationForm
+from django.views.generic import CreateView
+from django.urls import reverse_lazy
 
 User = get_user_model()
+
+class SignUpView(CreateView):
+    form_class = CustomUserCreationForm
+    success_url = reverse_lazy('public:login')
+    template_name = 'accounts/public/signup_generic.html'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['selected_plan'] = self.request.session.get('selected_plan')
+        return context
+    
+    def get(self, request, *args, **kwargs):
+        if not request.session.get('selected_plan'):
+            messages.warning(request, 'Please select a plan before signing up.')
+            return redirect('public:plan_selection')
+        return super().get(request, *args, **kwargs)
+    
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        # Log the user in after signup
+        auth_login(self.request, self.object)
+        # Clear the selected plan from the session
+        if 'selected_plan' in self.request.session:
+            del self.request.session['selected_plan']
+        return response
 
 def public_studio_videos(request, studio_slug):
     studio = get_object_or_404(StudioProfile, slug=studio_slug)

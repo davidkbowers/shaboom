@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib import messages
 from .forms import CustomUserCreationForm
-from .models import StudioProfile
+from studio.models import StudioProfile
 
 # Create your views here.
 
@@ -45,7 +45,7 @@ def register_view(request):
     # Check if user has selected a plan
     if not request.session.get('selected_plan'):
         messages.warning(request, 'Please select a plan before registering.')
-        return redirect('accounts:plan_selection')
+        return redirect('public:plan_selection')
 
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
@@ -83,7 +83,7 @@ def plan_selection_view(request):
         if selected_plan:
             request.session['selected_plan'] = selected_plan
             messages.success(request, f'You have selected the {selected_plan} plan.')
-            return redirect('accounts:register')
+            return redirect('/accounts/signup/')  # Using direct URL path
         else:
             messages.error(request, 'Please select a valid plan.')
     

@@ -49,7 +49,8 @@ SHARED_APPS = [
     
     # Shared apps (available to all tenants and public schema)
     'widget_tweaks',
-    'marketing',
+    'accounts',
+    'studio',  # Studio management app (shared across all tenants)
 ]
 
 TENANT_APPS = [
@@ -60,7 +61,6 @@ TENANT_APPS = [
     'django.contrib.messages',
     
     # Your tenant-specific apps
-    'accounts',
     'videos',
 ]
 
@@ -94,6 +94,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'studio.context_processors.studio_context',
             ],
         },
     },
@@ -104,7 +105,7 @@ WSGI_APPLICATION = 'shaboom.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
-DATABASE_URL = 'postgres://dave:punter89@localhost:5432/shaboom'
+DATABASE_URL = 'postgres://dave:punter89@localhost:5432/shaboom_tenants'
 DATABASES = {
     'default': {
         'ENGINE': 'django_tenants.postgresql_backend',

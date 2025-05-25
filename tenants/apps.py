@@ -12,4 +12,8 @@ class TenantsConfig(AppConfig):
             return
             
         # Only import signals after Django is fully loaded
-        from . import signals  # noqa
+        from . import signals
+        from django.apps import apps
+        
+        # Connect signals after Django is fully loaded
+        signals.connect_signals()

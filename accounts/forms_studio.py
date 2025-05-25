@@ -1,5 +1,5 @@
 from django import forms
-from .models import StudioProfile, StudioMembership
+from studio.models import StudioProfile, StudioMembership
 from django.core.exceptions import ValidationError
 
 class StudioProfileForm(forms.ModelForm):

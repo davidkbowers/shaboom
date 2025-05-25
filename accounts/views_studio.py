@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
 from django.db import transaction
-from .models import StudioProfile, StudioMembership
+from studio.models import StudioProfile, StudioMembership
 from .forms_studio import StudioProfileForm
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 

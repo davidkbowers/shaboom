@@ -7,7 +7,7 @@ from django.views.decorators.http import require_http_methods
 from django.contrib import messages
 from .models import Video, VideoStream, Comment, Category, Playlist, PlaylistVideo
 from .forms import VideoUploadForm, CommentForm, CategoryForm, PlaylistForm, PlaylistVideoForm
-from accounts.models import StudioProfile, StudioMembership
+from studio.models import StudioProfile, StudioMembership
 from datetime import datetime
 import os
 import json

@@ -74,7 +74,7 @@ class Comment(models.Model):
 class Category(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField(blank=True)
-    studio = models.ForeignKey('accounts.StudioProfile', on_delete=models.CASCADE, related_name='categories')
+    studio = models.ForeignKey('studio.StudioProfile', on_delete=models.CASCADE, related_name='categories')
     is_public = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -90,7 +90,7 @@ class Category(models.Model):
 class Playlist(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField(blank=True)
-    studio = models.ForeignKey('accounts.StudioProfile', on_delete=models.CASCADE, related_name='playlists')
+    studio = models.ForeignKey('studio.StudioProfile', on_delete=models.CASCADE, related_name='playlists')
     videos = models.ManyToManyField(Video, through='PlaylistVideo', related_name='playlists')
     is_public = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)

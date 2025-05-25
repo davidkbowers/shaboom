@@ -12,19 +12,22 @@ from django.conf.urls.static import static
 from django_tenants.utils import remove_www_and_dev, get_public_schema_name
 
 from . import views
+from accounts.views_landing import LandingPageView
 
 # Public URLs (no tenant)
 public_patterns = [
     path('admin/', admin.site.urls),
-    path('', include('marketing.urls', namespace='marketing')),
-    path('accounts/', include('accounts.public_urls', namespace='accounts_public')),  # Public account views
+    path('accounts/', include(('accounts.public_urls', 'public'), namespace='public')),  # Public account views
+    # Redirect root to landing page in public namespace
+    path('', RedirectView.as_view(url='/accounts/', permanent=False)),
 ]
 
 # Tenant-specific URLs
 tenant_patterns = [
     path('admin/', admin.site.urls),
-    path('accounts/', include('accounts.urls', namespace='accounts')),  # Tenant account views
-    path('videos/', include('videos.urls', namespace='videos')),
+    path('accounts/', include(('accounts.urls', 'accounts'), namespace='accounts')),  # Tenant account views
+    path('studio/', include(('studio.urls', 'studio'), namespace='studio')),  # Studio management
+    path('videos/', include(('videos.urls', 'videos'), namespace='videos')),
     path('', views.tenant_home, name='tenant_home'),
 ]
 
@@ -41,7 +44,7 @@ def tenant_required(view):
 # Main URL dispatcher
 urlpatterns = [
     # Public URLs (no tenant required)
-    path('', include((public_patterns, 'public'))),
+    path('', include(public_patterns)),
     
     # Tenant-specific URLs (handled by tenant middleware)
     path('', include(tenant_patterns)),
