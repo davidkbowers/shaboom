@@ -18,7 +18,7 @@ from accounts.views_landing import LandingPageView
 # Public URLs (no tenant)
 public_patterns = [
     path('admin/', admin.site.urls),
-    path('accounts/', include(('accounts.public_urls', 'public'), namespace='public')),  # Public account views
+    path('accounts/', include('accounts.public_urls', namespace='public')),  # Public account views - simplified namespace
     # Redirect root to landing page in public namespace
     path('', RedirectView.as_view(url='/accounts/', permanent=False)),
 ]
@@ -26,9 +26,9 @@ public_patterns = [
 # Tenant-specific URLs
 tenant_patterns = [
     path('admin/', tenant_admin_site.urls),
-    path('accounts/', include(('accounts.urls', 'accounts'), namespace='accounts')),  # Tenant account views
-    path('studio/', include(('studio.urls', 'studio'), namespace='studio')),  # Studio management
-    path('videos/', include(('videos.urls', 'videos'), namespace='videos')),
+    path('accounts/', include('accounts.urls', namespace='accounts')),  # Tenant account views - simplified
+    path('studio/', include('studio.urls', namespace='studio')),  # Studio management - simplified
+    path('videos/', include('videos.urls', namespace='videos')),  # Videos - simplified
     path('', views.tenant_home, name='tenant_home'),
 ]
 

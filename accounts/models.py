@@ -56,4 +56,4 @@ class CustomUser(AbstractUser):
         return self.user_type == 'owner'
 
     def get_absolute_url(self):
-        return reverse('studio_profile') if self.is_studio_owner else reverse('home')
+        return reverse('studio:dashboard') if self.is_studio_owner else reverse('accounts:profile')

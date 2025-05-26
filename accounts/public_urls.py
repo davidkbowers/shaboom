@@ -5,6 +5,9 @@ from . import views_public
 from .views import plan_selection_view
 from .views_landing import LandingPageView
 
+# Define the app name to match the namespace in main urls.py
+app_name = 'public'
+
 # Public account URLs (signup, login, password reset, etc.)
 urlpatterns = [
     # Landing page
@@ -24,7 +27,7 @@ urlpatterns = [
              template_name='accounts/public/password_reset.html',
              email_template_name='accounts/emails/password_reset_email.html',
              subject_template_name='accounts/emails/password_reset_subject.txt',
-             success_url=reverse_lazy('password_reset_done')
+             success_url=reverse_lazy('public:password_reset_done')
          ), 
          name='password_reset'),
     path('password_reset/done/', 
@@ -35,7 +38,7 @@ urlpatterns = [
     path('reset/<uidb64>/<token>/', 
          auth_views.PasswordResetConfirmView.as_view(
              template_name='accounts/public/password_reset_confirm.html',
-             success_url=reverse_lazy('password_reset_complete')
+             success_url=reverse_lazy('public:password_reset_complete')
          ), 
          name='password_reset_confirm'),
     path('reset/done/', 
@@ -51,5 +54,5 @@ urlpatterns = [
     ])),
     
     # Redirect root to login
-    path('', RedirectView.as_view(pattern_name='login', permanent=False)),
+    path('', RedirectView.as_view(pattern_name='public:login', permanent=False)),
 ]
