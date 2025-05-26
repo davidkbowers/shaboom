@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Studio Dashboard - {{ studio.owner.get_full_name|default:studio.owner.email }}{% endblock %}
+{% block title %}Studio Dashboard{% if studio and studio.owner %} - {{ studio.owner.get_full_name|default:studio.owner.email }}{% endif %}{% endblock %}
 
 {% block content %}
 <div class="container mx-auto px-4 py-8">
@@ -9,13 +9,13 @@
             <h1 class="text-2xl font-bold text-gray-800">
                 {% block page_title %}Studio Dashboard{% endblock %}
             </h1>
-            {% if studio %}
+            {% if studio and studio.owner %}
             <div class="flex items-center space-x-4">
                 <span class="text-sm text-gray-600">
                     {{ studio.owner.get_full_name|default:studio.owner.email }}
                 </span>
                 {% if studio.logo %}
-                <img src="{{ studio.logo.url }}" alt="{{ studio.owner.get_full_name }}" 
+                <img src="{{ studio.logo.url }}" alt="{{ studio.owner.get_full_name|default:studio.owner.email }}" 
                      class="h-10 w-10 rounded-full object-cover">
                 {% endif %}
             </div>

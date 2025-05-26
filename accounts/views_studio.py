@@ -32,7 +32,7 @@ def studio_profile_setup(request):
                     
                     profile.save()
                     messages.success(request, 'Studio profile updated successfully!')
-                    return redirect('studio:studio_dashboard')
+                    return redirect('studio:dashboard')
             except Exception as e:
                 messages.error(request, f'Error saving profile: {str(e)}')
     else:
@@ -76,7 +76,7 @@ def approve_membership(request, membership_id):
     membership.status = 'active'
     membership.save()
     messages.success(request, 'Membership approved successfully!')
-    return redirect('accounts:studio_admin_dashboard')
+    return redirect('accounts:studio:studio_admin_dashboard')
 
 @login_required
 @user_passes_test(is_studio_owner)
@@ -85,7 +85,7 @@ def deactivate_membership(request, membership_id):
     membership.status = 'inactive'
     membership.save()
     messages.success(request, 'Membership deactivated successfully!')
-    return redirect('accounts:studio_admin_dashboard')
+    return redirect('accounts:studio:studio_admin_dashboard')
 
 @login_required
 @user_passes_test(is_studio_owner)
@@ -94,7 +94,7 @@ def activate_membership(request, membership_id):
     membership.status = 'active'
     membership.save()
     messages.success(request, 'Membership activated successfully!')
-    return redirect('accounts:studio_admin_dashboard')
+    return redirect('accounts:studio:studio_admin_dashboard')
 
 @login_required
 def toggle_public_videos(request):
@@ -103,7 +103,7 @@ def toggle_public_videos(request):
         studio_profile.allow_public_videos = not studio_profile.allow_public_videos
         studio_profile.save()
         messages.success(request, 'Public video access has been updated.')
-    return redirect('studio:studio_dashboard')
+    return redirect('studio:dashboard')
 
 @login_required
 def toggle_public_signup(request):
@@ -112,4 +112,4 @@ def toggle_public_signup(request):
         studio_profile.allow_public_signup = not studio_profile.allow_public_signup
         studio_profile.save()
         messages.success(request, 'Public signup access has been updated.')
-    return redirect('studio:studio_dashboard')
+    return redirect('studio:dashboard')

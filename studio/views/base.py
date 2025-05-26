@@ -10,7 +10,12 @@ class StudioAccessMixin(LoginRequiredMixin, UserPassesTestMixin):
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        if hasattr(self.request.user, 'studio_profile'):
+        # Make sure studio is always set in the context, even if it's None
+        # This prevents template errors when trying to access studio attributes
+        context['studio'] = None
+        
+        # Set the studio profile if it exists
+        if hasattr(self.request.user, 'studio_profile') and self.request.user.studio_profile is not None:
             context['studio'] = self.request.user.studio_profile
         return context
 

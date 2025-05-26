@@ -1,6 +1,6 @@
 {% extends "studio/base.html" %}
 
-{% block page_title %}Studio Dashboard - {{ studio.owner.get_full_name|default:studio.owner.email }}{% endblock %}
+{% block page_title %}Studio Dashboard{% if studio and studio.owner %} - {{ studio.owner.get_full_name|default:studio.owner.email }}{% endif %}{% endblock %}
 
 {% block studio_content %}
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

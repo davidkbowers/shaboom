@@ -14,6 +14,9 @@ auth_urlpatterns = [
     path('register/', views.register_view, name='register'),
     path('plan-selection/', views.plan_selection_view, name='plan_selection'),
     
+    # User profile
+    path('profile/', views.profile_view, name='profile'),
+    
     # Password management
     path('password/change/', views.password_change_view, name='password_change'),
     
@@ -55,8 +58,8 @@ studio_urlpatterns = [
 
 # Main URL patterns
 urlpatterns = [
-    # Include authentication URLs
-    path('', include((auth_urlpatterns, 'accounts'))),
+    # Include authentication URLs directly without extra nesting
+    path('', include(auth_urlpatterns)),
     
     # Include studio URLs under /studio/
     path('studio/', include((studio_urlpatterns, 'studio'))),

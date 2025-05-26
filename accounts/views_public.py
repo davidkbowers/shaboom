@@ -80,14 +80,14 @@ def public_studio_signup(request, studio_slug):
 
 def user_login(request):
     if request.user.is_authenticated:
-        return redirect('tenant_home')
+        return redirect('accounts:profile')  # Or other appropriate namespaced URL
         
     if request.method == 'POST':
         form = AuthenticationForm(request, data=request.POST)
         if form.is_valid():
             user = form.get_user()
             auth_login(request, user)
-            next_url = request.POST.get('next', request.GET.get('next', 'tenant_home'))
+            next_url = request.POST.get('next', request.GET.get('next', 'accounts:profile'))
             return redirect(next_url)
     else:
         form = AuthenticationForm()

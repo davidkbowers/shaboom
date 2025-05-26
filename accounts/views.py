@@ -26,7 +26,7 @@ def login_view(request):
                 # Check if studio profile exists
                 try:
                     studio_profile = StudioProfile.objects.get(owner=user)
-                    return redirect('studio:studio_dashboard')
+                    return redirect('studio:dashboard')
                 except StudioProfile.DoesNotExist:
                     return redirect('accounts:studio_profile_setup')
             else:
@@ -83,7 +83,7 @@ def plan_selection_view(request):
         if selected_plan:
             request.session['selected_plan'] = selected_plan
             messages.success(request, f'You have selected the {selected_plan} plan.')
-            return redirect('/accounts/signup/')  # Using direct URL path
+            return redirect('public:signup')  # Using namespaced URL
         else:
             messages.error(request, 'Please select a valid plan.')
     
@@ -97,8 +97,20 @@ def password_change_view(request):
             user = form.save()
             update_session_auth_hash(request, user)
             messages.success(request, 'Your password was successfully updated!')
-            return redirect('studio:studio_dashboard')
+            if request.user.is_studio_owner:
+                return redirect('studio:dashboard')
+            else:
+                return redirect('accounts:profile')
     else:
         form = PasswordChangeForm(request.user)
     
     return render(request, 'accounts/password_change.html', {'form': form})
+
+
+@login_required
+def profile_view(request):
+    """View for displaying and managing user profile"""
+    # You can add any profile-specific logic here
+    return render(request, 'accounts/profile.html', {
+        'user': request.user
+    })
