@@ -3,9 +3,18 @@ from studio.models import StudioProfile, StudioMembership
 from django.core.exceptions import ValidationError
 
 class StudioProfileForm(forms.ModelForm):
+    subdomain = forms.SlugField(
+        required=True,
+        help_text="Choose a unique subdomain for your studio (e.g., 'yourstudio' for yourstudio.example.com)",
+        widget=forms.TextInput(attrs={
+            'class': 'form-input',
+            'placeholder': 'yourstudio'
+        })
+    )
+    
     class Meta:
         model = StudioProfile
-        fields = ['logo', 'description', 'website', 'instagram', 'facebook']
+        fields = ['subdomain', 'logo', 'description', 'website', 'instagram', 'facebook']
         widgets = {
             'description': forms.Textarea(attrs={
                 'class': 'form-input',
@@ -30,6 +39,25 @@ class StudioProfileForm(forms.ModelForm):
             })
         }
 
+    def clean_subdomain(self):
+        subdomain = self.cleaned_data.get('subdomain', '').lower()
+        
+        # Check if subdomain is already taken
+        if StudioProfile.objects.filter(subdomain=subdomain).exists():
+            if not (self.instance and self.instance.subdomain == subdomain):
+                raise forms.ValidationError("This subdomain is already taken. Please choose another one.")
+        
+        # Validate subdomain format
+        if not subdomain.isalnum() and '-' not in subdomain:
+            raise forms.ValidationError("Subdomain can only contain letters, numbers, and hyphens.")
+            
+        # Prevent common subdomains that might conflict with system routes
+        reserved_names = ['www', 'api', 'admin', 'app', 'staging', 'dev', 'test', 'mail', 'email', 'blog']
+        if subdomain in reserved_names:
+            raise forms.ValidationError("This subdomain is reserved. Please choose another one.")
+            
+        return subdomain
+        
     def clean_website(self):
         website = self.cleaned_data.get('website', '')
         if website:

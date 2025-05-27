@@ -35,6 +35,9 @@ ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["*"])
 # Process directory for video processing
 PROCESS_DIR = os.environ.get('PROCESS_DIR', default='/home/dave/projects-python/videoproc/to_process')
 
+# Domain for multi-tenancy
+DOMAIN = os.environ.get('DOMAIN', 'localhost')
+
 
 SHARED_APPS = [
     'django_tenants',  # Must be first

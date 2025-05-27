@@ -75,6 +75,31 @@
                                 </div>
                             </div>
 
+                            <!-- Subdomain -->
+                            <div>
+                                <label for="{{ form.subdomain.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                                    Studio Subdomain
+                                </label>
+                                <div class="mt-1">
+                                    <div class="form-input-container flex">
+                                        <span class="input-prefix">https://</span>
+                                        {{ form.subdomain|add_class:"form-input rounded-l-none" }}
+                                        <span class="input-prefix">.{{ domain }}</span>
+                                    </div>
+                                    {% if form.subdomain.errors %}
+                                        <p class="form-error">{{ form.subdomain.errors.0 }}</p>
+                                    {% endif %}
+                                </div>
+                                <p class="mt-2 text-sm text-gray-500">
+                                    This will be your studio's unique web address. Choose something simple and easy to remember.
+                                </p>
+                                {% if not is_new %}
+                                <p class="mt-2 text-sm text-yellow-600">
+                                    <strong>Note:</strong> Changing your subdomain will change your studio's URL. Update any bookmarks or links if necessary.
+                                </p>
+                                {% endif %}
+                            </div>
+
                             <!-- Studio Description -->
                             <div>
                                 <label for="description" class="block text-sm font-medium text-gray-700">

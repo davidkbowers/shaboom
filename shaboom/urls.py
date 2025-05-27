@@ -51,9 +51,19 @@ urlpatterns = [
     path('', include(tenant_patterns)),
 ]
 
-# Add media files serving in development
+# Add public schema redirect for the root domain in development
 if settings.DEBUG:
+    from django.views.generic import RedirectView
+    from django_tenants.utils import get_public_schema_name
+    
+    # Add media files serving in development
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    
+    # Add root domain redirect
+    urlpatterns += [
+        # Redirect root domain to public schema if in development
+        path('', lambda request: RedirectView.as_view(url=f'//{get_public_schema_name()}.{settings.DOMAIN}')),
+    ]
     
 # Error handlers
 handler404 = 'shaboom.views.handler404'

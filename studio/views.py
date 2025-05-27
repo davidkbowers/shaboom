@@ -59,9 +59,11 @@ def studio_profile_setup(request):
     try:
         # Try to get existing profile
         studio_profile = StudioProfile.objects.get(owner=request.user)
+        is_new = False
     except StudioProfile.DoesNotExist:
         # Create a new profile if one doesn't exist
-        studio_profile = StudioProfile.objects.create(owner=request.user)
+        studio_profile = StudioProfile(owner=request.user)
+        is_new = True
 
     if request.method == 'POST':
         form = StudioProfileForm(request.POST, request.FILES, instance=studio_profile)
@@ -75,17 +77,37 @@ def studio_profile_setup(request):
                     if 'logo' in request.FILES:
                         profile.logo = request.FILES['logo']
                     
+                    # Save the profile (this will trigger the tenant creation signal if it's a new profile)
                     profile.save()
+                    
+                    # Update the user type to studio owner if this is a new profile
+                    if is_new and not request.user.is_studio_owner:
+                        request.user.user_type = 'owner'
+                        request.user.save()
+                    
                     messages.success(request, 'Studio profile updated successfully!')
+                    
+                    # If this is a new profile, redirect to the new tenant URL
+                    if is_new and profile.tenant:
+                        return redirect(profile.get_absolute_url())
+                        
                     return redirect('studio:dashboard')
+                    
             except Exception as e:
+                # Log the full error for debugging
+                import logging
+                logger = logging.getLogger(__name__)
+                logger.error(f"Error saving studio profile: {str(e)}", exc_info=True)
+                
                 messages.error(request, f'Error saving profile: {str(e)}')
     else:
         form = StudioProfileForm(instance=studio_profile)
 
     return render(request, 'accounts/studio/profile_setup.html', {
         'form': form,
-        'studio_profile': studio_profile
+        'studio_profile': studio_profile,
+        'is_new': is_new,
+        'domain': settings.DOMAIN
     })
 
 @login_required
