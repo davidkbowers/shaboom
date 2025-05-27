@@ -3,8 +3,53 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
 from django.db import transaction
 from studio.models import StudioProfile, StudioMembership
-from .forms_studio import StudioProfileForm
+from .forms import StudioProfileForm
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.views.generic import TemplateView
+from django.urls import reverse
+
+class StudioAccessMixin(LoginRequiredMixin, UserPassesTestMixin):
+    """Mixin to ensure user is a studio owner and has an associated studio profile."""
+    
+    def test_func(self):
+        return self.request.user.is_authenticated and self.request.user.is_studio_owner
+    
+    def dispatch(self, request, *args, **kwargs):
+        # First, ensure user is authenticated and passes the test_func
+        if not request.user.is_authenticated:
+            return self.handle_no_permission()
+        
+        if not self.test_func():
+            return self.handle_no_permission()
+        
+        # Check if user has a studio profile
+        if not hasattr(request.user, 'studio_profile') or request.user.studio_profile is None:
+            # Redirect to profile setup with a message
+            return redirect(reverse('studio:studio_profile_setup')) # Ensure namespace for reverse
+            
+        return super().dispatch(request, *args, **kwargs)
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # At this point, we're sure studio profile exists due to dispatch check
+        context['studio'] = self.request.user.studio_profile
+        return context
+
+class StudioDashboardView(StudioAccessMixin, TemplateView):
+    """Main dashboard view for studio owners."""
+    template_name = 'studio/dashboard.html'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['active_tab'] = 'dashboard'
+        # If 'active_members' is needed for 'studio/dashboard.html', add it here:
+        # studio_profile = self.request.user.studio_profile
+        # context['active_members'] = StudioMembership.objects.filter(
+        #     studio=studio_profile,
+        #     status='active'
+        # ).count()
+        return context
 
 def is_studio_owner(user):
     return user.is_authenticated and user.is_studio_owner
@@ -42,23 +87,6 @@ def studio_profile_setup(request):
         'form': form,
         'studio_profile': studio_profile
     })
-
-@login_required
-def studio_dashboard(request):
-    studio_profile = get_object_or_404(StudioProfile, owner=request.user)
-    
-    # Get active members count
-    active_members = StudioMembership.objects.filter(
-        studio=studio_profile,
-        status='active'
-    ).count()
-    
-    context = {
-        'studio_profile': studio_profile,
-        'active_members': active_members,
-    }
-    
-    return render(request, 'accounts/studio/dashboard.html', context)
 
 @login_required
 def studio_admin_dashboard(request):

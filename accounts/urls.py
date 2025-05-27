@@ -1,6 +1,6 @@
 from django.urls import path, include
 from django.contrib.auth import views as auth_views
-from . import views, views_studio, views_public
+from . import views, views_public
 
 app_name = 'accounts'
 
@@ -47,20 +47,8 @@ auth_urlpatterns = [
          name='password_reset_complete'),
 ]
 
-# Studio Profile URLs
-studio_urlpatterns = [
-    #path('profile/setup/', views_studio.studio_profile_setup, name='studio_profile_setup'),
-    path('dashboard/', views_studio.studio_dashboard, name='studio_dashboard'),
-    path('admin/', views_studio.studio_admin_dashboard, name='studio_admin_dashboard'),
-    path('toggle-public-videos/', views_studio.toggle_public_videos, name='toggle_public_videos'),
-    path('toggle-public-signup/', views_studio.toggle_public_signup, name='toggle_public_signup'),
-]
-
 # Main URL patterns
 urlpatterns = [
     # Include authentication URLs directly without extra nesting
     path('', include(auth_urlpatterns)),
-    
-    # Include studio URLs under /studio/
-    path('studio/', include((studio_urlpatterns, 'studio'))),
 ]
