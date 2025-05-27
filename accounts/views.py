@@ -30,8 +30,7 @@ def login_view(request):
                     return redirect('studio:dashboard')
                 except StudioProfile.DoesNotExist:
                     # No profile exists, redirect to setup page using the correct namespace
-                    # Using accounts:studio:studio_profile_setup as per the URL namespace structure
-                    return redirect('accounts:studio:studio_profile_setup')
+                    return redirect('studio:studio_profile_setup')
             else:
                 return redirect('accounts:member_dashboard')
         else:
