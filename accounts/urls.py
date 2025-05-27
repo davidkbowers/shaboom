@@ -49,7 +49,7 @@ auth_urlpatterns = [
 
 # Studio Profile URLs
 studio_urlpatterns = [
-    path('profile/setup/', views_studio.studio_profile_setup, name='studio_profile_setup'),
+    #path('profile/setup/', views_studio.studio_profile_setup, name='studio_profile_setup'),
     path('dashboard/', views_studio.studio_dashboard, name='studio_dashboard'),
     path('admin/', views_studio.studio_admin_dashboard, name='studio_admin_dashboard'),
     path('toggle-public-videos/', views_studio.toggle_public_videos, name='toggle_public_videos'),

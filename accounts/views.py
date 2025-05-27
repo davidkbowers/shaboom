@@ -22,13 +22,16 @@ def login_view(request):
                 return redirect(next_url)
             
             # Redirect based on user type
-            if user.user_type == 'owner':
+            if user.is_studio_owner:  # Use the property instead of direct field check
                 # Check if studio profile exists
                 try:
                     studio_profile = StudioProfile.objects.get(owner=user)
+                    # Profile exists, redirect to dashboard
                     return redirect('studio:dashboard')
                 except StudioProfile.DoesNotExist:
-                    return redirect('accounts:studio_profile_setup')
+                    # No profile exists, redirect to setup page using the correct namespace
+                    # Using accounts:studio:studio_profile_setup as per the URL namespace structure
+                    return redirect('accounts:studio:studio_profile_setup')
             else:
                 return redirect('accounts:member_dashboard')
         else:

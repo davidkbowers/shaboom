@@ -10,9 +10,13 @@
         <div class="space-y-4">
             <div>
                 <p class="text-sm text-gray-600">Studio Name</p>
+                {% if studio and studio.owner %}
                 <p class="font-medium">{{ studio.owner.get_full_name|default:studio.owner.email }}</p>
+                {% else %}
+                <p class="font-medium text-gray-500">Not configured</p>
+                {% endif %}
             </div>
-            {% if studio.website %}
+            {% if studio and studio.website %}
             <div>
                 <p class="text-sm text-gray-600">Website</p>
                 <a href="{{ studio.website }}" class="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">
