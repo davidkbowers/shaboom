@@ -128,15 +128,26 @@
                     <div class="hidden md:ml-6 md:flex md:space-x-8 md:items-end">
                         {% block navigation_items %}
                         {% if user.is_studio_owner %}
-                            <a href="{% url 'studio:dashboard' %}" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium h-full">Dashboard</a>
-                            <a href="{% url 'studio:admin_dashboard' %}" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium h-full">Admin</a>
-                            <a href="{% url 'videos:video_list' %}" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium h-full">Videos</a>
-                            <a href="{% url 'videos:category_list' %}" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium h-full">Categories</a>
-                            <a href="{% url 'videos:playlist_list' %}" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium h-full">Playlists</a>
-                            <a href="{% url 'videos:upload_video' %}" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium h-full">Upload Video</a>
+                            {% comment %} Only display studio namespace links if we're not in the public schema {% endcomment %}
+                            {% url 'studio:dashboard' as studio_dashboard_url %}
+                            {% if studio_dashboard_url %}
+                                <a href="{{ studio_dashboard_url }}" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium h-full">Dashboard</a>
+                                {% url 'studio:admin_dashboard' as studio_admin_url %}
+                                <a href="{{ studio_admin_url }}" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium h-full">Admin</a>
+                            {% endif %}
+                            {% url 'videos:video_list' as videos_url %}
+                            {% if videos_url %}
+                                <a href="{{ videos_url }}" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium h-full">Videos</a>
+                                <a href="{% url 'videos:category_list' %}" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium h-full">Categories</a>
+                                <a href="{% url 'videos:playlist_list' %}" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium h-full">Playlists</a>
+                                <a href="{% url 'videos:upload_video' %}" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium h-full">Upload Video</a>
+                            {% endif %}
                         {% else %}
                             <a href="{% url 'videos:video_list' %}" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium h-full">Videos</a>
-                            <a href="{% url 'accounts:profile' %}" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium h-full">Profile</a>
+                            {% url 'accounts:profile' as profile_url %}
+                            {% if profile_url %}
+                                <a href="{{ profile_url }}" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium h-full">Profile</a>
+                            {% endif %}
                         {% endif %}
                         {% endblock %}
                     </div>
@@ -147,12 +158,19 @@
                 <div class="hidden md:flex md:items-center">
                     {% if user.is_authenticated %}
                     <div class="ml-4 flex items-center space-x-4">
-                        <a href="{% url 'accounts:password_change' %}" class="text-gray-500 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
-                            Settings
-                        </a>
-                        <a href="{% url 'accounts:logout' %}" class="text-gray-500 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
-                            Logout
-                        </a>
+                        {% url 'accounts:password_change' as password_change_url %}
+                        {% if password_change_url %}
+                            <a href="{{ password_change_url }}" class="text-gray-500 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
+                                Settings
+                            </a>
+                        {% endif %}
+                        
+                        {% url 'accounts:logout' as logout_url %}
+                        {% if logout_url %}
+                            <a href="{{ logout_url }}" class="text-gray-500 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
+                                Logout
+                            </a>
+                        {% endif %}
                     </div>
                     {% else %}
                     <div class="flex items-center space-x-4">
@@ -181,19 +199,50 @@
                 {% if user.is_authenticated %}
                     {% block mobile_navigation_items %}
                     {% if user.is_studio_owner %}
-                        <a href="{% url 'studio:dashboard' %}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50">Dashboard</a>
-                        <a href="{% url 'studio:admin_dashboard' %}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50">Admin</a>
-                        <a href="{% url 'videos:video_list' %}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50">Videos</a>
-                        <a href="{% url 'videos:category_list' %}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50">Categories</a>
-                        <a href="{% url 'videos:playlist_list' %}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50">Playlists</a>
-                        <a href="{% url 'videos:upload_video' %}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50">Upload Video</a>
-                        <a href="{% url 'accounts:password_change' %}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50">Settings</a>
-                        <a href="{% url 'accounts:logout' %}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50">Logout</a>
+                        {% comment %} Only display studio namespace links if we're not in the public schema {% endcomment %}
+                        {% url 'studio:dashboard' as studio_dashboard_url %}
+                        {% if studio_dashboard_url %}
+                            <a href="{{ studio_dashboard_url }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50">Dashboard</a>
+                            {% url 'studio:admin_dashboard' as studio_admin_url %}
+                            <a href="{{ studio_admin_url }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50">Admin</a>
+                        {% endif %}
+                        
+                        {% url 'videos:video_list' as videos_url %}
+                        {% if videos_url %}
+                            <a href="{{ videos_url }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50">Videos</a>
+                            <a href="{% url 'videos:category_list' %}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50">Categories</a>
+                            <a href="{% url 'videos:playlist_list' %}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50">Playlists</a>
+                            <a href="{% url 'videos:upload_video' %}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50">Upload Video</a>
+                        {% endif %}
+                        
+                        {% url 'accounts:password_change' as password_change_url %}
+                        {% if password_change_url %}
+                            <a href="{{ password_change_url }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50">Settings</a>
+                        {% endif %}
+                        
+                        {% url 'accounts:logout' as logout_url %}
+                        {% if logout_url %}
+                            <a href="{{ logout_url }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50">Logout</a>
+                        {% endif %}
                     {% else %}
-                        <a href="{% url 'videos:video_list' %}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50">Videos</a>
-                        <a href="{% url 'accounts:profile' %}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50">My Profile</a>
-                        <a href="{% url 'accounts:password_change' %}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50">Settings</a>
-                        <a href="{% url 'accounts:logout' %}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50">Logout</a>
+                        {% url 'videos:video_list' as videos_url %}
+                        {% if videos_url %}
+                            <a href="{{ videos_url }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50">Videos</a>
+                        {% endif %}
+                        
+                        {% url 'accounts:profile' as profile_url %}
+                        {% if profile_url %}
+                            <a href="{{ profile_url }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50">My Profile</a>
+                        {% endif %}
+                        {% url 'accounts:password_change' as password_change_url %}
+                        {% if password_change_url %}
+                            <a href="{{ password_change_url }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50">Settings</a>
+                        {% endif %}
+                        
+                        {% url 'accounts:logout' as logout_url %}
+                        {% if logout_url %}
+                            <a href="{{ logout_url }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50">Logout</a>
+                        {% endif %}
                     {% endif %}
                     {% endblock %}
                 {% else %}
@@ -242,9 +291,12 @@
                         </li>
                         {% if user.is_authenticated %}
                         <li>
-                            <a href="{% url 'accounts:password_change' %}" class="text-base text-gray-500 hover:text-gray-900">
-                                Change Password
-                            </a>
+                            {% url 'accounts:password_change' as password_change_url %}
+                            {% if password_change_url %}
+                                <a href="{{ password_change_url }}" class="text-base text-gray-500 hover:text-gray-900">
+                                    Change Password
+                                </a>
+                            {% endif %}
                         </li>
                         {% else %}
                         <li>
