@@ -45,7 +45,7 @@ def tenant_required(view):
 # Main URL dispatcher
 urlpatterns = [
     # Public URLs (no tenant required)
-    path('', include(public_patterns)),
+    path('', include(public_patterns)), # Restoring public_patterns
     
     # Tenant-specific URLs (handled by tenant middleware)
     path('', include(tenant_patterns)),

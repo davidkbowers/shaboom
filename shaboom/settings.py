@@ -85,7 +85,9 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'shaboom.urls'
+# ROOT_URLCONF = 'shaboom.urls' # Old setting
+ROOT_URLCONF = 'shaboom.tenant_urls' # Tenant-specific URLs are the default ROOT_URLCONF
+PUBLIC_SCHEMA_URLCONF = 'shaboom.public_urls' # For public schema
 
 TEMPLATES = [
     {
@@ -173,6 +175,12 @@ AUTH_USER_MODEL = 'accounts.CustomUser'
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
 ]
+
+# Authentication URLs
+LOGIN_URL = 'accounts:login'
+LOGOUT_URL = 'accounts:logout'
+LOGIN_REDIRECT_URL = 'tenant_home'
+LOGOUT_REDIRECT_URL = 'tenant_home'
 
 LOGGING = {  
     "version": 1,  
