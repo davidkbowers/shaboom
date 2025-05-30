@@ -222,6 +222,11 @@ MEDIA_URL = env("MEDIA_PATH", default="/media/")
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# Session settings
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True  # Session expires when browser is closed
+SESSION_COOKIE_AGE = None  # Session has no expiration age
+SESSION_SAVE_EVERY_REQUEST = True  # Save the session on every request
+
 # Messages settings
 MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
 
