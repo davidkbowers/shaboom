@@ -27,7 +27,7 @@ public_patterns = [
 tenant_patterns = [
     path('admin/', tenant_admin_site.urls),
     path('accounts/', include('accounts.urls', namespace='accounts')),  # Tenant account views - simplified
-    path('studio/', include('studio.urls', namespace='studio')),  # Studio management - simplified
+    path('studio/', include(('studio.urls', 'studio'), namespace='studio')),  # Studio management
     path('videos/', include('videos.urls', namespace='videos')),  # Videos - simplified
     path('', views.tenant_home, name='tenant_home'),
 ]

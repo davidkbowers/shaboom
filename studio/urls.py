@@ -6,6 +6,7 @@ from .views import (
     deactivate_membership, activate_membership
 )
 
+# Define app_name for the studio app
 app_name = 'studio'
 
 urlpatterns = [

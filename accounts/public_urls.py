@@ -17,6 +17,8 @@ urlpatterns = [
     path('signup/', views_public.SignUpView.as_view(), name='signup'),
     path('login/', views_public.user_login, name='login'),
     path('logout/', views_public.user_logout, name='logout'),
+    # User profile
+    path('profile/', views_public.profile_view, name='profile'),
     # Studio-specific signup (keeps the old URL pattern for studio-specific signups)
     path('signup/<slug:studio_slug>/', views_public.public_studio_signup, name='studio_signup'),
     

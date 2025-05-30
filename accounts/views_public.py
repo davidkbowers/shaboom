@@ -79,29 +79,43 @@ def public_studio_signup(request, studio_slug):
     })
 
 def user_login(request):
+    # If user is already authenticated, redirect to appropriate profile
     if request.user.is_authenticated:
-        return redirect('accounts:profile')  # Or other appropriate namespaced URL
-        
+        if hasattr(request, 'tenant') and request.tenant.schema_name != 'public':
+            return redirect('accounts:profile')
+        return redirect('public:profile')
+    
+    # Handle form submission
     if request.method == 'POST':
         form = AuthenticationForm(request, data=request.POST)
         if form.is_valid():
             user = form.get_user()
             auth_login(request, user)
-            next_url = request.POST.get('next', request.GET.get('next', 'accounts:profile'))
-            return redirect(next_url)
+            next_url = request.POST.get('next', request.GET.get('next', ''))
+            if next_url:
+                return redirect(next_url)
+            # Default redirect after login
+            if hasattr(request, 'tenant') and request.tenant.schema_name != 'public':
+                return redirect('accounts:profile')
+            return redirect('public:profile')
     else:
         form = AuthenticationForm()
+        next_url = request.GET.get('next', '')
     
-    # Add the next parameter to the form's hidden fields
-    next_url = request.GET.get('next', '')
-    context = {
+    return render(request, 'accounts/public/login.html', {
         'form': form,
         'next': next_url
-    }
-    return render(request, 'accounts/public/login.html', context)
+    })
 
 def user_logout(request):
     auth_logout(request)
     return redirect('public:landing')
+
+
+def profile_view(request):
+    """View for displaying and managing user profile (public version)"""
+    if not request.user.is_authenticated:
+        return redirect('public:login')
+    return render(request, 'accounts/public/profile.html')
 
 # Password reset is now handled by Django's built-in views in public_urls.py
