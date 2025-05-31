@@ -3,6 +3,7 @@ from django.contrib.auth import login, logout, authenticate, update_session_auth
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib import messages
+from django.urls import reverse_lazy
 from .forms import CustomUserCreationForm
 from studio.models import StudioProfile
 
@@ -79,16 +80,23 @@ def register_view(request):
     
     return render(request, 'accounts/register.html', {'form': form})
 
+import logging
+
 def plan_selection_view(request):
+    logger = logging.getLogger(__name__)
     if request.method == 'POST':
         selected_plan = request.POST.get('plan')
+        logger.warning(f"Selected plan: {selected_plan}")
         if selected_plan:
             request.session['selected_plan'] = selected_plan
+            request.session.modified = True  # Ensure session is saved
+            logger.warning(f"Session after setting plan: {request.session.items()}")
             messages.success(request, f'You have selected the {selected_plan} plan.')
-            return redirect('public:signup')  # Using namespaced URL
+            return redirect(reverse_lazy('public:public_accounts:signup'))
         else:
             messages.error(request, 'Please select a valid plan.')
     
+    logger.warning(f"Current session before rendering plan_selection: {request.session.items()}")
     return render(request, 'accounts/plan_selection.html')
 
 @login_required

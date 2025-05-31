@@ -10,6 +10,8 @@ from studio.models import StudioProfile, StudioMembership
 from .forms import CustomUserCreationForm
 from django.views.generic import CreateView
 from django.urls import reverse_lazy
+import logging
+# Note: reverse_lazy was already imported, ensure no duplication if this edit is applied after a previous one that also added it.
 
 User = get_user_model()
 
@@ -22,12 +24,27 @@ class SignUpView(CreateView):
         context = super().get_context_data(**kwargs)
         context['selected_plan'] = self.request.session.get('selected_plan')
         return context
-    
+
     def get(self, request, *args, **kwargs):
-        if not request.session.get('selected_plan'):
+        logger = logging.getLogger(__name__)
+        logger.warning(f"SignUpView GET - User authenticated: {request.user.is_authenticated}")
+        logger.warning(f"SignUpView GET - Session data: {request.session.items()}")
+        
+        if request.user.is_authenticated:
+            # If user is already logged in, redirect to their dashboard
+            return redirect('studio:dashboard')
+            
+        selected_plan = request.session.get('selected_plan')
+        logger.warning(f"SignUpView GET - Selected plan from session: {selected_plan}")
+            
+        if not selected_plan:
             messages.warning(request, 'Please select a plan before signing up.')
-            return redirect('public:plan_selection')
-        return super().get(request, *args, **kwargs)
+            return redirect(reverse_lazy('public:public_accounts:plan_selection'))
+            
+        # Make sure the plan is passed to the context
+        context = self.get_context_data(**kwargs)
+        context['selected_plan'] = selected_plan
+        return self.render_to_response(context)
     
     def form_valid(self, form):
         response = super().form_valid(form)
