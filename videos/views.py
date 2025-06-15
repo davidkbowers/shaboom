@@ -6,6 +6,7 @@ from django.core.files.storage import default_storage
 from django.views.decorators.http import require_http_methods
 from .models import Video, VideoStream, Comment, Category, Playlist, PlaylistVideo
 from .forms import VideoUploadForm, CommentForm, CategoryForm, PlaylistForm, PlaylistVideoForm
+from .tasks import process_video
 from accounts.models import StudioProfile
 import os
 import subprocess
