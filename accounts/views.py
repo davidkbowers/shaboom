@@ -8,11 +8,15 @@ from .models import StudioProfile
 
 # Create your views here.
 
+import logging
+
 def login_view(request):
     if request.method == 'POST':
         email = request.POST.get('email')
         password = request.POST.get('password')
+        logging.debug(f"Login attempt: email={email}, password_length={len(password) if password else 0}")
         user = authenticate(request, email=email, password=password)
+        logging.debug(f"authenticate() returned: {user}")
         
         if user is not None:
             login(request, user)
@@ -32,6 +36,7 @@ def login_view(request):
             else:
                 return redirect('accounts:member_dashboard')
         else:
+            logging.debug(f"Login failed for email={email}")
             messages.error(request, 'Invalid email or password. Please check your credentials and try again.')
     
     return render(request, 'accounts/login.html')

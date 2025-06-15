@@ -81,7 +81,7 @@ WSGI_APPLICATION = 'shaboom.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': os.environ.get('SQL_ENGINE', 'django.db.backends.postgresql'),
-        'NAME': os.environ.get('SQL_DATABASE', 'shaboom'),
+        'NAME': os.environ.get('SQL_DATABASE', 'coreconnect'),
         'USER': os.environ.get('SQL_USER', 'dave'),
         'PASSWORD': os.environ.get('SQL_PASSWORD', 'punter89'),
         'HOST': os.environ.get('SQL_HOST', 'localhost'),
@@ -144,3 +144,36 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # Celery settings
 CELERY_BROKER_URL = 'redis://localhost:6379/0'
 CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+
+# Logging configuration
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '[{levelname}] {asctime} {name} {message}',
+            'style': '{',
+        },
+        'simple': {
+            'format': '[{levelname}] {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'DEBUG',
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+    },
+}
